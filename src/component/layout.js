@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/dashboard";
 import AuthLayout from "./authlayout";
 import Login from "../pages/login/login";
-import CardDetails from "../pages/cardDetails/cardDetails";
+import CardDetails from "./cardDetails/cardDetails";
 
 
 function Layout() {
