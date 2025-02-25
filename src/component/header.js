@@ -3,12 +3,14 @@ import logoImg from '../imgs/AU-Bank-logo.png';
 import profileIcon from '../imgs/profile.png';
 import dropdownImg from '../imgs/arrow-down-sign-to-navigate.png';
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  let navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -19,6 +21,10 @@ function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSubmit=()=>{
+    navigate("/")
+  }
 
   return (
     <div className='px-10 flex flex-auto justify-between items-center border-b-[1px] border-[#6d3078] '>
@@ -47,7 +53,7 @@ function Header() {
                 <p className="text-gray-700 font-semibold">John Doe</p>
                 <p className="text-sm text-gray-500">john.doe@example.com</p>
               </div>
-              <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+              <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100" onClick={handleSubmit}>
                 Sign Out
               </button>
             </div>
