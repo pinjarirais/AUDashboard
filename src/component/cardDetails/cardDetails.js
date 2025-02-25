@@ -17,7 +17,7 @@ function CardDetails() {
         // console.log("Cards Data:", data);
         const limitedCards = data.carts.slice(0,2);
         setCards(limitedCards);
-        console.log("limitedCards",limitedCards);
+        // console.log("limitedCards",limitedCards);
         if (limitedCards.length > 0) {
           setSelectedCard(limitedCards[0].id);
           fetchCardData(limitedCards[0].id);
@@ -30,7 +30,7 @@ function CardDetails() {
     fetch(`https://dummyjson.com/carts/${cardId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(`Card ${cardId} Data:`, data);
+        // console.log(`Card ${cardId} Data:`, data);
         if (data) {
           updateCardData(data);
         }
@@ -49,12 +49,12 @@ function CardDetails() {
 
     setTransactions(transformedTransactions);
 
-    // Process data for Line Chart
+    // data for Line Chart
     const categories = transformedTransactions.map((txn) => txn.transaction);
     const salesData = transformedTransactions.map((txn) => txn.amount);
     setLineChartData({ categories, data: salesData });
 
-    // Process data for Pie Chart
+    // data for Pie Chart
     const totalExpense = salesData.reduce((acc, curr) => acc + curr, 0);
     const remainingBalance = 1000 - totalExpense;
     setPieChartData([
@@ -73,7 +73,7 @@ function CardDetails() {
     <div className="px-2 md:px-10">
       <div className="dashboard-wrap">
         <div className="flex flex-col md:flex-row justify-between py-3 align-middle h-screen">
-          {/* Left Sidebar */}
+
           <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
             <div className="w-full space-y-3">
               <label className="block text-sm/6 text-gray-700 font-bold">My Cards</label>
@@ -120,7 +120,6 @@ function CardDetails() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="w-full md:w-3/4 px-5 overflow-y-auto pb-[50px] scrollbar-hide">
             <div className="flex flex-col md:flex-row">
               <div className="w-full md:w-1/2">
@@ -131,7 +130,6 @@ function CardDetails() {
               </div>
             </div>
 
-            {/* Transaction Table */}
             <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto border-collapse border border-gray-300 md:max-w-[500px] md:overflow-x-scroll">
