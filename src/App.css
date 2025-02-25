@@ -11,3 +11,6 @@
 .scrollbar-hide {
   scrollbar-width: none;
 }
+.highcharts-legend.highcharts-no-tooltip{
+  display: none!important;
+}
