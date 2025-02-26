@@ -18,7 +18,7 @@ const requiredHeaders = ["name", "email", "phone", "pancard_number", "card_numbe
 const ExcelUploader = () => {
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState([]);
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5MzI1MzY4ODAxIiwicm9sZSI6IkNIX1VTRVIiLCJpYXQiOjE3NDA0Njk5NjYsImV4cCI6MTc0MDQ3MzU2Nn0.4GblGxgCxZLrlS2-rwgOLA6Ov-R83wk7n3oyaI1EUQ4';
+  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5MzI1MzY4ODAxIiwicm9sZSI6IkFVU19VU0VSIiwiaWF0IjoxNzQwNTYzMjMxLCJleHAiOjE3NDA1NjY4MzF9.yA_Zoc2VfSokpIEZzzJEcxJTxvWPatNTvgKVuG9hcrc'
   // const token = localStorage.getItem("jwtToken");
 
   const handleFileSelect = (event) => {
@@ -32,13 +32,13 @@ const ExcelUploader = () => {
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      setErrors(["No file selected. Please choose a file first."]);
+    if (!file || !(file instanceof File)) {
+      setErrors(["Invalid file. Please upload a valid Excel file."]);
       return;
     }
-
+  
     const reader = new FileReader();
-    reader.readAsBinaryString(file);
+  
     reader.onload = async (e) => {
       try {
         const binaryStr = e.target?.result;
@@ -46,53 +46,74 @@ const ExcelUploader = () => {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const data = XLSX.utils.sheet_to_json(sheet);
-
+  
         if (data.length === 0) {
           setErrors(["The uploaded file is empty."]);
           return;
         }
-
+  
         const fileHeaders = Object.keys(data[0]).map((h) => h.toLowerCase());
         const missingHeaders = requiredHeaders.filter((header) => !fileHeaders.includes(header));
-
+  
         if (missingHeaders.length > 0) {
           setErrors([`Missing columns: ${missingHeaders.join(", ")}`]);
           return;
         }
-
-        const validatedData = data.map((row, index) => {
-          try {
-            return fileSchema.parse({
-              name: row.name,
-              email: row.email,
-              phone: row.phone.toString(),
-              pancard_number: row.pancard_number,
-              card_number: row.card_number.toString(),
-              aus_user_id: Number(row.aus_user_id),
-              role_id: Number(row.role_id),
-            });
-          } catch (err) {
-            throw new Error(`Row ${index + 2}: ${err.errors.map((e) => e.message).join(", ")}`);
-          }
-        });
-
-        await axios.post("http://localhost:8081/api/cardholders/upload-excel", validatedData,
-          {headers: {
+  
+        const validationErrors = [];
+        const validatedData = data
+          .map((row, index) => {
+            try {
+              return fileSchema.parse({
+                name: row.name,
+                email: row.email,
+                phone: row.phone?.toString(),
+                pancard_number: row.pancard_number,
+                card_number: row.card_number?.toString(),
+                aus_user_id: Number(row.aus_user_id),
+                role_id: Number(row.role_id),
+              });
+            } catch (err) {
+              validationErrors.push(`Row ${index + 2}: ${err.errors.map((e) => e.message).join(", ")}`);
+              return null;
+            }
+          })
+          .filter(Boolean);
+  
+        if (validationErrors.length > 0) {
+          setErrors(validationErrors);
+          return;
+        }
+  
+        // **Prepare file upload with validated data**
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("validatedData", JSON.stringify(validatedData)); 
+  
+        await axios.post("http://localhost:8081/api/cardholders/upload-excel", formData, {
+          headers: {
             Authorization: `Bearer ${token}`,
-          },}
-        );
+            "Content-Type": "multipart/form-data",
+          },
+        });
+  
         setErrors([]);
         alert("File uploaded successfully!");
       } catch (error) {
         setErrors([error.message || "Invalid Excel file format."]);
       }
     };
+  
+    reader.readAsBinaryString(file);
   };
+  
+
+  
 
   const handleDownload = async () => {
     try {
-      const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5MzI1MzY4ODAxIiwicm9sZSI6IkNIX1VTRVIiLCJpYXQiOjE3NDA0Njk5NjYsImV4cCI6MTc0MDQ3MzU2Nn0.4GblGxgCxZLrlS2-rwgOLA6Ov-R83wk7n3oyaI1EUQ4';
       const response = await axios.get("http://localhost:8081/api/cardholders/download-empty-excel", {
+        responseType:'blob',
         headers: {
           Authorization: `Bearer ${token}`,
         },
