@@ -8,6 +8,7 @@ function Login() {
   const [isData, setIsData] = useState(false);
   const [getmobiledata, setGetMobileData] = useState("");
   const [resendFunc, setResendFunc] = useState(null)
+  const [mobileresponse, setMobileResponse] = useState('')
 
   console.log("isData",isData);
   console.log("getmobiledata",getmobiledata);
@@ -18,15 +19,16 @@ function Login() {
           <img
             className="self-center justify-self-center m-auto"
             src={loginImg}
-          ></img>
+            alt="loginimg"
+          />
         </div>
         <div className="login-form w-full md:w-1/2 p-5">
         <div className='form-wrapp mx-auto md:mx-5 sm:w-full sm:max-w-sm'>
-          <div className='logo-wrap'><img src={logoImg} className='w-[120px] mx-auto md:mx-0' /></div>
+          <div className='logo-wrap'><img src={logoImg} className='w-[120px] mx-auto md:mx-0' alt="logo" /></div>
           {isData ? (
-            <OTP getmobiledata={getmobiledata} resendFunc={resendFunc} />
+            <OTP mobileresponse={mobileresponse} getmobiledata={getmobiledata} resendFunc={resendFunc} />
           ) : (
-            <Mobile setIsData={setIsData} setGetMobileData={setGetMobileData} setResendFunc={setResendFunc} />
+            <Mobile setMobileResponse={setMobileResponse} setIsData={setIsData} setGetMobileData={setGetMobileData} setResendFunc={setResendFunc} />
           )}
           </div>
         </div>
