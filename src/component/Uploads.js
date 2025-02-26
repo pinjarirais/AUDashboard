@@ -85,7 +85,7 @@ const ExcelUploader = () => {
           return;
         }
   
-        // **Prepare file upload with validated data**
+
         const formData = new FormData();
         formData.append("file", file);
         formData.append("validatedData", JSON.stringify(validatedData)); 
