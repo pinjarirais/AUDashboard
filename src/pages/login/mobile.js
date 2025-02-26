@@ -1,50 +1,53 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
-function Mobile({ setIsData, setGetMobileData }) {
-  const [mobError, setMobError] = useState('')
+function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
+  const [mobError, setMobError] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
   const loginschema = z.object({
-    mobileNumber: z.string().min(10, {
-      message: "mobile number must be at least 10 number.",
-    }),
+    mobileNumber: z
+      .string()
+      .regex(/^\d+$/, { message: "Only numbers are allowed." })
+      .length(10, { message: "Mobile number must be exactly 10 digits." }),      
   });
 
-  const { register, handleSubmit, formState, reset, setError } = useForm({
+  const { register, handleSubmit, formState, reset, control} = useForm({
     resolver: zodResolver(loginschema),
+    mode: "onChange",
   });
 
-  const { errors, isValid } = formState;
+  const { errors, isValid, isSubmitted, submitCount } = formState;
+
+  //console.log("formState >>>>>>", submitCount);
 
   async function postdata(data) {
     try {
+      setIsLoading(true)
       const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        data
+        `http://localhost:8080/api/auth/generate-otp?phone=${data.mobileNumber}`        
       );
       console.log("data response >>>>>", response);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
+        setIsLoading(false)
         setIsData(true);
-        setGetMobileData(response.data.mobileNumber);
+        setGetMobileData(data.mobileNumber);
+        setMobileResponse(response.data.message)
       }
     } catch (error) {
       setMobError(error);
     }
   }
 
-
-  
-
   const onSubmit = (data) => {
     console.log(data);    
     postdata(data);
     reset();
   };
-
-  
 
   return (
     <>
@@ -54,10 +57,12 @@ function Mobile({ setIsData, setGetMobileData }) {
             Register Mobile Number
           </label>
           <input
+            type="text"
             className="w-full rounded-md bg-white px-3 py-1.5 text-base sm:text-sm/6 border-[1px] border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none"
             autoFocus
             placeholder="Enter Your Number"
             {...register("mobileNumber")}
+            maxLength={10}
           />
           {errors.mobileNumber && (
             <p className="text-xs w-full block text-red-500 mt-1">
@@ -65,14 +70,13 @@ function Mobile({ setIsData, setGetMobileData }) {
             </p>
           )}
 
-          {mobError.message && (
-            <p className="text-xs w-full block text-red-500 mt-1">
-              {mobError.message}
-            </p>
-          )}
+          {/* {mobError && (
+            <p className="text-xs w-full block text-red-500 mt-1">{mobError}</p>
+          )} */}
         </div>
 
         <div className="feild w-full md:max-w-80">
+          
           <button
             className={
               !isValid
@@ -81,9 +85,10 @@ function Mobile({ setIsData, setGetMobileData }) {
             }
             disabled={!isValid}
           >
-            Genrate OTP
+            {isLoading ? 'loading...': 'Genrate OTP'}
           </button>
         </div>
+        <DevTool control={control} /> {/* set up the dev tool */}
       </form>
     </>
   );

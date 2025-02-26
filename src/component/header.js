@@ -3,12 +3,18 @@ import logoImg from '../imgs/AU-Bank-logo.png';
 import profileIcon from '../imgs/profile.png';
 import dropdownImg from '../imgs/arrow-down-sign-to-navigate.png';
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function Header() {
-
+  let navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const clearSession = ()=>{
+    localStorage.clear("token")
+    navigate("/")
+  }
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -23,7 +29,7 @@ function Header() {
   return (
     <div className='px-10 flex flex-auto justify-between items-center border-b-[1px] border-[#6d3078] '>
       <div className='logo-wrap'>
-        <img src={logoImg} className='w-[80px]' />
+        <img src={logoImg} className='w-[80px]' alt='logo' />
       </div>
 
       <div>
@@ -38,7 +44,7 @@ function Header() {
               className="w-8 h-8 rounded-full"
             />
             <span>John Doe</span>
-            <img src={dropdownImg} className='w-[10px]' />
+            <img src={dropdownImg} className='w-[10px]' alt='dropdownImg' />
           </button>
 
           {isOpen && (
@@ -47,7 +53,7 @@ function Header() {
                 <p className="text-gray-700 font-semibold">John Doe</p>
                 <p className="text-sm text-gray-500">john.doe@example.com</p>
               </div>
-              <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+              <button onClick={clearSession} className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
                 Sign Out
               </button>
             </div>

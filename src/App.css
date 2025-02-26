@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.highcharts-credits {
+    display: none !important;
+  }
+  .card-bg {
+    background-image: url(../src/imgs/card-png.png);
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+  .highcharts-legend.highcharts-no-tooltip{
+    display: none!important;
+  }
