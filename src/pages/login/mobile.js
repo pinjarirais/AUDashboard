@@ -4,6 +4,7 @@ import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import CryptoJS from 'crypto-js';
 
 function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
   const [mobError, setMobError] = useState("");
@@ -24,7 +25,11 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
 
   //console.log("formState >>>>>>", submitCount);
 
+  
+  
+
   async function postdata(data) {
+    //const mobNumber = data.mobileNumber;
     try {
       setIsLoading(true)
       const response = await axios.post(

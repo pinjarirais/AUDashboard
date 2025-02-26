@@ -4,6 +4,7 @@ import Footer from './footer';
 
 const AuthLayout = () => {
   // ... perhaps some authentication logic to protect routes?
+  
   return (
     <>
       <Header />

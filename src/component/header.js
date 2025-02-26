@@ -3,7 +3,7 @@ import logoImg from '../imgs/AU-Bank-logo.png';
 import profileIcon from '../imgs/profile.png';
 import dropdownImg from '../imgs/arrow-down-sign-to-navigate.png';
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 function Header() {
@@ -29,7 +29,7 @@ function Header() {
   return (
     <div className='px-10 flex flex-auto justify-between items-center border-b-[1px] border-[#6d3078] '>
       <div className='logo-wrap'>
-        <img src={logoImg} className='w-[80px]' alt='logo' />
+        <Link to={"/dashboard"}><img src={logoImg} className='w-[80px]' alt='logo' /></Link>
       </div>
 
       <div>

@@ -70,13 +70,13 @@ function CardDetails() {
   };
 
   return (
-    <div className="px-2 md:px-10">
+    <div className="px-2 lg:px-10">
       <div className="dashboard-wrap">
-        <div className="flex flex-col md:flex-row justify-between py-3 align-middle h-screen">
+        <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-screen">
 
           <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
-            <div className="w-full space-y-3">
-              <label className="block text-sm/6 text-gray-700 font-bold">My Cards</label>
+            <div className="w-full space-y-3 mb-5 md:mb-0">
+              <label className="block text-sm/6 text-gray-700 font-bold text-center md:text-left">My Cards</label>
               {cards.length > 0 ? (
                 cards.map((card) => (
                   <div key={card.id} className="w-full mb-2">
@@ -88,17 +88,17 @@ function CardDetails() {
                       checked={selectedCard === card.id}
                       onChange={handleCardChange}
                     /> */}
-                    <label className="ml-3" htmlFor={card.id}>
+                    <label className="block w-full mx-auto md:ml-3 text-center md:text-left" htmlFor={card.id}>
                       Card {card.id}
                     </label>
                     {selectedCard === card.id && (
                       <div className="relative w-full show">
-                        <div className="card-bg bg-cover w-[250px] h-[165px] rounded-[25px] text-white flex flex-col justify-evenly">
+                        <div className="mx-auto md:ml-1 card-bg bg-cover w-[250px] h-[165px] lg:w-[250px] lg:h-[165px] md:w-[170px] md:h-[110px] rounded-[25px] text-white flex flex-col justify-evenly">
                           <div className="px-5 py-2">
                             <p>Credit Card</p>
                           </div>
                           <div className="px-5 py-2">
-                            <p className="tracking-[2px]">4111 1111 1111 111{card.id}</p>
+                            <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[18px]">4111 1111 1111 111{card.id}</p>
                           </div>
                         </div>
                       </div>
@@ -110,7 +110,7 @@ function CardDetails() {
               )}
             </div>
 
-            <div className="flex flex-row gap-3">
+            <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
               <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
                 <Link to="/EditProfile">Edit Profile</Link>
               </button>
@@ -120,7 +120,7 @@ function CardDetails() {
             </div>
           </div>
 
-          <div className="w-full md:w-3/4 px-5 overflow-y-auto pb-[50px] scrollbar-hide">
+          <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
             <div className="flex flex-col md:flex-row">
               <div className="w-full md:w-1/2">
                 <LineChart categories={lineChartData.categories} data={lineChartData.data} />
