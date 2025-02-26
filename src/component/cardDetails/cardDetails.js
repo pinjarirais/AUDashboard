@@ -15,7 +15,7 @@ function CardDetails() {
       .then((response) => response.json())
       .then((data) => {
         // console.log("Cards Data:", data);
-        const limitedCards = data.carts.slice(0,2);
+        const limitedCards = data.carts.slice(0,1);
         setCards(limitedCards);
         // console.log("limitedCards",limitedCards);
         if (limitedCards.length > 0) {
@@ -80,14 +80,14 @@ function CardDetails() {
               {cards.length > 0 ? (
                 cards.map((card) => (
                   <div key={card.id} className="w-full mb-2">
-                    <input
+                    {/* <input
                       className="accent-[#6d3078]"
                       type="radio"
                       name="userSelectedCard"
                       value={card.id}
                       checked={selectedCard === card.id}
                       onChange={handleCardChange}
-                    />
+                    /> */}
                     <label className="ml-3" htmlFor={card.id}>
                       Card {card.id}
                     </label>

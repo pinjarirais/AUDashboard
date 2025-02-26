@@ -3,7 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 const LineChart = ({ categories, data }) => {
-  console.log("data",data)
+  // console.log("data",data)
   const options = {
     // title: {
     //   text: "Monthly Expense Data",
