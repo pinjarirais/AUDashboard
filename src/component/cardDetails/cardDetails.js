@@ -15,7 +15,7 @@ function CardDetails() {
       .then((response) => response.json())
       .then((data) => {
         // console.log("Cards Data:", data);
-        const limitedCards = data.carts.slice(0,1);
+        const limitedCards = data.carts.slice(0, 1);
         setCards(limitedCards);
         // console.log("limitedCards",limitedCards);
         if (limitedCards.length > 0) {
@@ -40,11 +40,11 @@ function CardDetails() {
 
   const updateCardData = (card) => {
     const transformedTransactions = card.products.map((product, index) => ({
-      transaction: `TXN${card.id}${index + 1}`, 
-      time: new Date().toLocaleTimeString(), 
-      date: new Date().toLocaleDateString(), 
-      amount: Math.round(product.price * product.quantity), 
-      status: Math.random() > 0.5 ? "Success" : "Pending", 
+      transaction: `TXN${card.id}${index + 1}`,
+      time: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleDateString(),
+      amount: Math.round(product.price * product.quantity),
+      status: Math.random() > 0.5 ? "Success" : "Pending",
     }));
 
     setTransactions(transformedTransactions);
@@ -93,13 +93,21 @@ function CardDetails() {
                     </label>
                     {selectedCard === card.id && (
                       <div className="relative w-full show">
-                        <div className="mx-auto md:ml-1 card-bg bg-cover w-[250px] h-[165px] lg:w-[250px] lg:h-[165px] md:w-[170px] md:h-[110px] rounded-[25px] text-white flex flex-col justify-evenly">
+                        <div className="mx-auto md:ml-1 card-bg bg-cover w-[250px] h-[165px] xl:w-[250px] xl:h-[165px] lg:w-[210px] lg:h-[140px] md:w-[170px] md:h-[110px] rounded-[25px] text-white flex flex-col justify-evenly">
                           <div className="px-5 py-2">
                             <p>Credit Card</p>
                           </div>
                           <div className="px-5 py-2">
-                            <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[18px]">4111 1111 1111 111{card.id}</p>
+                            <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">4111 1111 1111 111{card.id}</p>
                           </div>
+                        </div>
+                        <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-5">
+                          <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+                            <Link to="/edit-profile">Edit Profile</Link>
+                          </button>
+                          <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+                            <Link to="/change-pin">Change Pin</Link>
+                          </button>
                         </div>
                       </div>
                     )}
@@ -110,14 +118,7 @@ function CardDetails() {
               )}
             </div>
 
-            <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
-              <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                <Link to="/edit-profile">Edit Profile</Link>
-              </button>
-              <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                <Link to="/change-pin">Change Pin</Link>
-              </button>
-            </div>
+
           </div>
 
           <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
@@ -151,9 +152,8 @@ function CardDetails() {
                         <td className="px-4 py-2 border-b">{transaction.date}</td>
                         <td className="px-4 py-2 border-b">₹ {transaction.amount}</td>
                         <td
-                          className={`px-4 py-2 border-b font-bold ${
-                            transaction.status === "Success" ? "text-green-600" : "text-yellow-600"
-                          }`}
+                          className={`px-4 py-2 border-b font-bold ${transaction.status === "Success" ? "text-green-600" : "text-yellow-600"
+                            }`}
                         >
                           {transaction.status}
                         </td>
