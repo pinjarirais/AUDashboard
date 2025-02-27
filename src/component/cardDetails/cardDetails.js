@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 
@@ -9,34 +9,68 @@ function CardDetails() {
   const [transactions, setTransactions] = useState([]);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
+  const { cardNo } = useParams();
 
   useEffect(() => {
-    fetch("https://dummyjson.com/carts")
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log("Cards Data:", data);
-        const limitedCards = data.carts.slice(0, 1);
+    if (cardNo) {
+      fetchCardData(cardNo);
+    }
+  }, [cardNo]);
+
+
+  // useEffect(() => {
+  //   fetch("https://dummyjson.com/carts")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       // console.log("Cards Data:", data);
+  //       const limitedCards = data.carts.slice(0, 1);
+  //       setCards(limitedCards);
+  //       // console.log("limitedCards",limitedCards);
+  //       if (limitedCards.length > 0) {
+  //         setSelectedCard(limitedCards[0].id);
+  //         fetchCardData(limitedCards[0].id);
+  //       }
+  //     })
+  //     .catch((error) => console.error("Error fetching cards:", error));
+  // }, []);
+
+  useEffect(() => {
+    const fetchAPIs = async () => {
+      try {
+        const [cartData, userData, productData] = await Promise.all([
+          fetch("https://dummyjson.com/carts").then((res) => res.json()),
+          fetch("https://dummyjson.com/users").then((res) => res.json()),
+          fetch("https://dummyjson.com/products").then((res) => res.json()),
+        ]);
+        const limitedCards = cartData.carts.slice(0, 1);
         setCards(limitedCards);
-        // console.log("limitedCards",limitedCards);
         if (limitedCards.length > 0) {
           setSelectedCard(limitedCards[0].id);
           fetchCardData(limitedCards[0].id);
         }
-      })
-      .catch((error) => console.error("Error fetching cards:", error));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchAPIs();
   }, []);
-
-  const fetchCardData = (cardId) => {
-    fetch(`https://dummyjson.com/carts/${cardId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log(`Card ${cardId} Data:`, data);
-        if (data) {
-          updateCardData(data);
-        }
-      })
-      .catch((error) => console.error("Error fetching transactions:", error));
+  
+  const fetchCardData = async (cardNo) => {
+    try {
+      const [cartResponse, userResponse, productResponse] = await Promise.all([
+        fetch(`https://dummyjson.com/carts/${1}`).then((res) => res.json()),
+        fetch("https://dummyjson.com/users").then((res) => res.json()),
+        fetch("https://dummyjson.com/products").then((res) => res.json()),
+      ]);
+      if (cartResponse) {
+        updateCardData(cartResponse, userResponse, productResponse);
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
   };
+  
 
   const updateCardData = (card) => {
     const transformedTransactions = card.products.map((product, index) => ({
@@ -98,7 +132,7 @@ function CardDetails() {
                             <p>Credit Card</p>
                           </div>
                           <div className="px-5 py-2">
-                            <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">4111 1111 1111 111{card.id}</p>
+                            <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">{cardNo}</p>
                           </div>
                         </div>
                         <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-5">
