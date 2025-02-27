@@ -18,58 +18,70 @@ function CardDetails() {
   }, [cardNo]);
 
 
-  // useEffect(() => {
-  //   fetch("https://dummyjson.com/carts")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       // console.log("Cards Data:", data);
-  //       const limitedCards = data.carts.slice(0, 1);
-  //       setCards(limitedCards);
-  //       // console.log("limitedCards",limitedCards);
-  //       if (limitedCards.length > 0) {
-  //         setSelectedCard(limitedCards[0].id);
-  //         fetchCardData(limitedCards[0].id);
-  //       }
-  //     })
-  //     .catch((error) => console.error("Error fetching cards:", error));
-  // }, []);
-
   useEffect(() => {
-    const fetchAPIs = async () => {
-      try {
-        const [cartData, userData, productData] = await Promise.all([
-          fetch("https://dummyjson.com/carts").then((res) => res.json()),
-          fetch("https://dummyjson.com/users").then((res) => res.json()),
-          fetch("https://dummyjson.com/products").then((res) => res.json()),
-        ]);
-        const limitedCards = cartData.carts.slice(0, 1);
+    fetch("https://dummyjson.com/carts")
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log("Cards Data:", data);
+        const limitedCards = data.carts.slice(0, 1);
         setCards(limitedCards);
+        // console.log("limitedCards",limitedCards);
         if (limitedCards.length > 0) {
-          setSelectedCard(limitedCards[0].id);
-          fetchCardData(limitedCards[0].id);
+          setSelectedCard(1);
+          fetchCardData(1);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-  
-    fetchAPIs();
+      })
+      .catch((error) => console.error("Error fetching cards:", error));
   }, []);
-  
-  const fetchCardData = async (cardNo) => {
-    try {
-      const [cartResponse, userResponse, productResponse] = await Promise.all([
-        fetch(`https://dummyjson.com/carts/${1}`).then((res) => res.json()),
-        fetch("https://dummyjson.com/users").then((res) => res.json()),
-        fetch("https://dummyjson.com/products").then((res) => res.json()),
-      ]);
-      if (cartResponse) {
-        updateCardData(cartResponse, userResponse, productResponse);
-      }
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
+
+  const fetchCardData = (cardNo) => {
+    fetch(`https://dummyjson.com/carts/${1}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(`Card ${cardId} Data:`, data);
+        if (data) {
+          updateCardData(data);
+        }
+      })
+      .catch((error) => console.error("Error fetching transactions:", error));
   };
+
+  // useEffect(() => {
+  //   const fetchAPIs = async () => {
+  //     try {
+  //       const [cartData, userData, productData] = await Promise.all([
+  //         fetch("https://dummyjson.com/carts").then((res) => res.json()),
+  //         fetch("https://dummyjson.com/users").then((res) => res.json()),
+  //         fetch("https://dummyjson.com/products").then((res) => res.json()),
+  //       ]);
+  //       const limitedCards = cartData.carts.slice(0, 1);
+  //       setCards(limitedCards);
+  //       if (limitedCards.length > 0) {
+  //         setSelectedCard(1);
+  //         fetchCardData(1);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  
+  //   fetchAPIs();
+  // }, []);
+  
+  // const fetchCardData = async (cardNo) => {
+  //   try {
+  //     const [cartResponse, userResponse, productResponse] = await Promise.all([
+  //       fetch(`https://dummyjson.com/carts/${1}`).then((res) => res.json()),
+  //       fetch("https://dummyjson.com/users").then((res) => res.json()),
+  //       fetch("https://dummyjson.com/products").then((res) => res.json()),
+  //     ]);
+  //     if (cartResponse) {
+  //       updateCardData(cartResponse, userResponse, productResponse);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching transactions:", error);
+  //   }
+  // };
   
 
   const updateCardData = (card) => {
