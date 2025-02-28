@@ -1,17 +1,20 @@
-import { Outlet } from 'react-router-dom';
-import Header from './header';
-import Footer from './footer';
+import { Outlet } from "react-router-dom";
+import Header from "./header";
+import Footer from "./footer";
+import { DataProvider } from "./dataProvider";
 
 const AuthLayout = () => {
   // ... perhaps some authentication logic to protect routes?
-  
+
   return (
     <>
-      <Header />
-      <Outlet />
-      <Footer />
+      <DataProvider>
+        <Header />
+        <Outlet />
+        <Footer />
+      </DataProvider>
     </>
   );
 };
 
-export default AuthLayout
+export default AuthLayout;

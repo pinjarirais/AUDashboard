@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import useDataFetch from "../hooks/useDataFetch";
 import CHtable from "../component/CHtable";
 import AUStable from "../component/AUStable";
+import { useData } from "../component/dataProvider";
 
 function Dashboard() {
-  //const { setTitle } = useOutletContext();  
+  //const { setTitle } = useOutletContext(); 
+  const { setSharedData } = useData(); 
   const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
   const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
@@ -24,7 +26,9 @@ function Dashboard() {
 
   console.log("userData >>>>>>>>", userData);
 
-  
+  if(userData){
+    setSharedData(userData)
+  }
 
   
 

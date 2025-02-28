@@ -4,52 +4,76 @@ import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
+
+const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars 
+const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
+
+// AES Encryption function
+function encryptAES(text) {
+  const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
+  const iv = CryptoJS.enc.Utf8.parse(IV);
+  const encrypted = CryptoJS.AES.encrypt(text, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return encrypted.toString();
+}
 
 function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
   const [mobError, setMobError] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+
   const loginschema = z.object({
     mobileNumber: z
       .string()
       .regex(/^\d+$/, { message: "Only numbers are allowed." })
-      .length(10, { message: "Mobile number must be exactly 10 digits." }),      
+      .length(10, { message: "Mobile number must be exactly 10 digits." }),
   });
 
-  const { register, handleSubmit, formState, reset, control} = useForm({
+  const { register, handleSubmit, formState, reset, control } = useForm({
     resolver: zodResolver(loginschema),
     mode: "onChange",
   });
 
-  const { errors, isValid, isSubmitted, submitCount } = formState;
-
-  //console.log("formState >>>>>>", submitCount);
-
-  
-  
+  const { errors, isValid } = formState;
 
   async function postdata(data) {
-    //const mobNumber = data.mobileNumber;
     try {
-      setIsLoading(true)
+      setIsLoading(true);
+
+      // Encrypt the phone number
+      const encryptedPhone = encryptAES(data.mobileNumber);
+      console.log("Encrypted Phone:", encryptedPhone);
+
+      const encodedEncryptedPhone = encodeURIComponent(encryptedPhone);
+
       const response = await axios.post(
-        `http://localhost:8080/api/auth/generate-otp?phone=${data.mobileNumber}`        
+        `http://localhost:8080/api/auth/generate-otp?phone=${encodedEncryptedPhone}`
       );
-      console.log("data response >>>>>", response);
+
+      // const response = await axios.post(
+      //   "http://localhost:8080/api/auth/generate-otp",
+      //   { phone: encodedEncryptedPhone }, // Payload data
+        
+      // );
+
+      console.log("Response:", response);
 
       if (response.status === 200) {
-        setIsLoading(false)
+        setIsLoading(false);
         setIsData(true);
-        setGetMobileData(data.mobileNumber);
-        setMobileResponse(response.data.message)
+        setGetMobileData(encryptedPhone);
+        setMobileResponse(response.data.message);
       }
     } catch (error) {
-      setMobError(error);
+      setIsLoading(false);
+      setMobError(error.response?.data?.message || "Something went wrong!");
     }
   }
 
   const onSubmit = (data) => {
-    console.log(data);    
     postdata(data);
     reset();
   };
@@ -74,14 +98,9 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
               {errors.mobileNumber.message}
             </p>
           )}
-
-          {/* {mobError && (
-            <p className="text-xs w-full block text-red-500 mt-1">{mobError}</p>
-          )} */}
         </div>
 
         <div className="feild w-full md:max-w-80">
-          
           <button
             className={
               !isValid
@@ -90,11 +109,14 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
             }
             disabled={!isValid}
           >
-            {isLoading ? 'loading...': 'Genrate OTP'}
+            {isLoading ? "Loading..." : "Generate OTP"}
           </button>
         </div>
-        <DevTool control={control} /> {/* set up the dev tool */}
+        <DevTool control={control} />
       </form>
+      {mobError && (
+        <p className="text-xs text-red-500 mt-1 text-center">{mobError}</p>
+      )}
     </>
   );
 }
