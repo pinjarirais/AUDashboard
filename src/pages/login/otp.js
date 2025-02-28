@@ -12,10 +12,9 @@ function OTP({ getmobiledata, mobileresponse }) {
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
 
+  console.log(getmobiledata)
+
   const otpschema = z.object({
-    mobileNumber: z.string().min(10, {
-      message: "mobile number must be at least 10 number.",
-    }),
     otpfield: z.string().min(6, {
       message: "OTP must be at least 6 alphaNumric.",
     }),
@@ -35,14 +34,14 @@ function OTP({ getmobiledata, mobileresponse }) {
     try {
       const response = await axios
         .post(
-          `http://localhost:8080/api/auth/validate-otp?phone=${data.mobileNumber}&otp=${data.otpfield}`
+          `http://localhost:8080/api/auth/validate-otp?phone=${getmobiledata}&otp=${data.otpfield}`
         )
         // .then((res) => console.log("axios response >>>>>>>>>", res));
       console.log("data response >>>>>", response);
 
       //const authorizationHeader = response.headers["Authorization"];
       //console.log("response token", authorizationHeader);
-      if (response.status == 200) {
+      if (response.status === 200) {
         let authuser = response.data.roleName;
         let jwtToken = response.data.token;
         let mobileNumber = response.data.mobileNumber;
