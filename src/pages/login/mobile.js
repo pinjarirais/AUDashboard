@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars 
+const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
 
 // AES Encryption function
@@ -47,10 +47,15 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
       const encryptedPhone = encryptAES(data.mobileNumber);
       console.log("Encrypted Phone:", encryptedPhone);
 
-      const encodedEncryptedPhone = encodeURIComponent(encryptedPhone);
+
+      const payload = { phone: encryptedPhone };
 
       const response = await axios.post(
-        `http://localhost:8080/api/auth/generate-otp?phone=${encodedEncryptedPhone}`
+        "http://localhost:8080/api/auth/generate-otp",
+        payload, 
+        {
+          headers: { "Content-Type": "application/json" }, 
+        }
       );
 
       console.log("Response:", response);
