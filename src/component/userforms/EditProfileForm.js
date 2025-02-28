@@ -56,7 +56,7 @@ const EditProfileForm = () => {
                 cardNumber: data.debitCardNumber,
             };
 
-            const response = await axios.put(`http://localhost:8081/api/cardholders/update/${obj.cardNumber}`, payload, {
+            const response = await axios.put('http://localhost:8081/api/cardholders/update', payload, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
