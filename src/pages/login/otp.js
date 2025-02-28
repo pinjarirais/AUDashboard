@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import CountdownTimer from "../../component/counttime";
 
-const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; //32 char
-const IV = "MTIzNDU2Nzg5MDEy"; // 16 char
+const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 char
+const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
 
 function OTP({ getmobiledata, mobileresponse }) {
   let navigate = useNavigate();
@@ -41,29 +41,41 @@ function OTP({ getmobiledata, mobileresponse }) {
     return encrypted.toString();
   }
 
-  async function postdata(data) {
-    try {
-      // Encrypt OTP before sending
-      const encryptedOtp = encryptAES(data.otpfield);
+ async function postdata(data) {
+  try {
+    // Encrypt OTP before sending
+    const encryptedOtp = encryptAES(data.otpfield);
 
-      const response = await axios.post(
-        `http://localhost:8080/api/auth/validate-otp?phone=${getmobiledata}&otp=${encodeURIComponent(encryptedOtp)}`
-      );
+    const payload = {
+      phone: getmobiledata,
+      otp: encryptedOtp,
+    };
 
-      if (response.status === 200) {
-        let authuser = response.data.roleName;
-        let jwtToken = response.data.token;
-        let mobileNumber = response.data.mobileNumber;
-
-        localStorage.setItem("authuser", JSON.stringify(authuser));
-        localStorage.setItem("token", JSON.stringify(jwtToken));
-        localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
-        navigate("/dashboard");
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/validate-otp",
+      payload, 
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    } catch (error) {
-      setResponseError(error);
+    );
+
+    if (response.status === 200) {
+      let authuser = response.data.roleName;
+      let jwtToken = response.data.token;
+      let mobileNumber = response.data.mobileNumber;
+
+      localStorage.setItem("authuser", JSON.stringify(authuser));
+      localStorage.setItem("token", JSON.stringify(jwtToken));
+      localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
+      navigate("/dashboard");
     }
+  } catch (error) {
+    setResponseError(error.response?.data?.message || "Something went wrong");
   }
+}
+
 
   const onSubmit = (data) => {
     postdata(data);
