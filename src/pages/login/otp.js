@@ -6,6 +6,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import CountdownTimer from "../../component/counttime";
+// import { ToastContainer } from "react-toastify";
+import ToastNotification from "../../component/ToastNotifications";
 
 const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; //32 char
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 char
@@ -90,7 +92,7 @@ function OTP({ getmobiledata, mobileresponse }) {
     onSubmit({ mobileNumber: getmobiledata });
     navigate("/");
   };
-
+console.log("responseError",responseError);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="feild w-full md:max-w-80">
@@ -110,6 +112,9 @@ function OTP({ getmobiledata, mobileresponse }) {
             {mobileresponse}
           </p>
         )}
+          {/* {mobileresponse && mobileresponse.trim() !== "" && (
+            <ToastNotification message={mobileresponse} type="success" />
+          )} */}
       </div>
 
       <div className="feild w-full md:max-w-80 mt-6">
@@ -132,12 +137,18 @@ function OTP({ getmobiledata, mobileresponse }) {
             {responseError.code}
           </p>
         )}
+          {/* {responseError.code && (
+            <ToastNotification message={responseError.code} type="error" />
+          )} */}
 
         {errors.otpfield && (
           <p className="text-xs w-full block text-red-500 mt-1">
             {errors.otpfield.message}
           </p>
         )}
+            {/* {errors.otpfield &&  (
+            <ToastNotification message={errors.otpfield.message} type="error" />
+          )} */}
       </div>
 
       <div className="feild w-full md:max-w-80">

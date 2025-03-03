@@ -69,7 +69,8 @@ function AUStable({ userData, currentpg, setCurrentPg }) {
                 <tr key={item.id}>
                   <td className="border border-gray-300 p-2">{item.id}</td>
                   <td className="border border-gray-300 p-2 text-blue-700 underline">
-                  <Link to={`/cardDetails/${item.cardNumber}`}>{item.cardNumber}</Link>
+                    {/* <Link to={"/cardDetails"}>{item.cardNumber}</Link> */}
+                    <Link to={`/cardDetails/${item.cardNumber}`}>{item.cardNumber}</Link>
                   </td>
                   <td className="border border-gray-300 p-2">{item.name}</td>
                   <td className="border border-gray-300 p-2">

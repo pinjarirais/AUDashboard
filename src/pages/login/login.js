@@ -10,8 +10,8 @@ function Login() {
   const [resendFunc, setResendFunc] = useState(null)
   const [mobileresponse, setMobileResponse] = useState('')
 
-  console.log("isData",isData);
-  console.log("getmobiledata",getmobiledata);
+  console.log(isData);
+  console.log(getmobiledata);
   return (
     <>
       <div className="flex flex-col md:flex-row h-[100vh]">

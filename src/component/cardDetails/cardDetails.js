@@ -6,72 +6,71 @@ import PieChart from "./PieChart";
 import { FadeLoader } from "react-spinners";
 
 function CardDetails() {
-  const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+  const [transactionsData, setTransactionsData] = useState({});
+  const [selectedCard, setSelectedCard] = useState(null);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
   const { cardNo } = useParams();
+  // console.log("cardNo",cardNo);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (cardNo) {
-      fetchCardData(cardNo);
-    }
-  }, [cardNo]);
-
-  useEffect(() => {
-    axios
-      .get("https://dummyjson.com/carts")
-      .then((response) => {
-        setIsLoading(false);
-        const limitedCards = response.data.carts.slice(0, 1);
-        setCards(limitedCards);
-        if (limitedCards.length > 0) {
-          setSelectedCard(limitedCards[0].id);
-          fetchCardData(limitedCards[0].id);
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.error("Error fetching cards:", error);
-      });
+    fetchAllCards();
   }, []);
 
-  const fetchCardData = async (cardNo) => {
+  const fetchAllCards = async () => {
     try {
-      const response = await axios.get(`https://dummyjson.com/carts/${1}`);
+      const response = await axios.get("https://dummyjson.com/carts");
       setIsLoading(false);
-      if (response.data) {
-        updateCardData(response.data);
+
+      const fetchedCards = response.data.carts.slice(0, 1);
+      setCards(fetchedCards);
+
+      const allTransactions = {};
+      fetchedCards.forEach((card) => {
+        allTransactions[card.id] = transformTransactions(card);
+      });
+
+      setTransactionsData(allTransactions);
+      if (fetchedCards.length > 0) {
+        const defaultCard = fetchedCards[0].id;
+        setSelectedCard(defaultCard);
+        updateCardData(allTransactions[defaultCard]);
       }
     } catch (error) {
       setIsLoading(false);
-      console.error("Error fetching transactions:", error);
+      console.error("Error fetching cards:", error);
     }
   };
 
-  const updateCardData = (card) => {
-    const transformedTransactions = card.products.map((product, index) => ({
+  const transformTransactions = (card) => {
+    return card.products.map((product, index) => ({
       transaction: `TXN${card.id}${index + 1}`,
       time: new Date().toLocaleTimeString(),
       date: new Date().toLocaleDateString(),
       amount: Math.round(product.price * product.quantity),
       status: Math.random() > 0.5 ? "Success" : "Pending",
     }));
+  };
 
-    setTransactions(transformedTransactions);
+  const updateCardData = (transactions) => {
+    setLineChartData({
+      categories: transactions.map((txn) => txn.transaction),
+      data: transactions.map((txn) => txn.amount),
+    });
 
-    const categories = transformedTransactions.map((txn) => txn.transaction);
-    const salesData = transformedTransactions.map((txn) => txn.amount);
-    setLineChartData({ categories, data: salesData });
-
-    const totalExpense = salesData.reduce((acc, curr) => acc + curr, 0);
+    const totalExpense = transactions.reduce((acc, txn) => acc + txn.amount, 0);
     const remainingBalance = 1000 - totalExpense;
     setPieChartData([
       { name: "Expense", y: totalExpense },
       { name: "Balance", y: remainingBalance > 0 ? remainingBalance : 0 },
     ]);
+  };
+
+  const handleCardSelection = (cardId) => {
+    setSelectedCard(cardId);
+    updateCardData(transactionsData[cardId]);
   };
 
   return (
@@ -90,7 +89,15 @@ function CardDetails() {
                   {cards.length > 0 ? (
                     cards.map((card) => (
                       <div key={card.id} className="w-full mb-2">
-                        <label className="block w-full mx-auto md:ml-3 text-center md:text-left" htmlFor={card.id}>
+                        <label className="block w-full mx-auto md:ml-3 text-center md:text-left">
+                          <input
+                            type="radio"
+                            name="card"
+                            value={card.id}
+                            checked={selectedCard === card.id}
+                            onChange={() => handleCardSelection(card.id)}
+                            className="mr-2"
+                          />
                           Card {card.id}
                         </label>
                         {selectedCard === card.id && (
@@ -105,10 +112,10 @@ function CardDetails() {
                             </div>
                             <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-5">
                               <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                <Link to="/edit-profile">Edit Profile</Link>
+                                <Link to="/EditProfile">Edit Profile</Link>
                               </button>
                               <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                <Link to="/change-pin">Change Pin</Link>
+                                <Link to="/ChangePin">Change Pin</Link>
                               </button>
                             </div>
                           </div>
@@ -144,8 +151,8 @@ function CardDetails() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length > 0 ? (
-                        transactions.map((transaction, index) => (
+                      {transactionsData[selectedCard]?.length > 0 ? (
+                        transactionsData[selectedCard].map((transaction, index) => (
                           <tr key={index} className="odd:bg-white even:bg-[#F2F2F2]">
                             <td className="px-4 py-2 border-b">{transaction.transaction}</td>
                             <td className="px-4 py-2 border-b">{transaction.time}</td>
@@ -158,7 +165,7 @@ function CardDetails() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="5" className="px-4 py-2 text-center">Loading transactions...</td>
+                          <td colSpan="5" className="px-4 py-2 text-center">No Transactions</td>
                         </tr>
                       )}
                     </tbody>

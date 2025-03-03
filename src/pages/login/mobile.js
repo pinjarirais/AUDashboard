@@ -1,10 +1,12 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+// import { ToastContainer, toast } from "react-toastify";
+import ToastNotification from "../../component/ToastNotifications";
 
 const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars 
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
@@ -38,6 +40,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
   });
 
   const { errors, isValid } = formState;
+  console.log("errors",errors);
 
   async function postdata(data) {
     try {
@@ -56,7 +59,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
       // const response = await axios.post(
       //   "http://localhost:8080/api/auth/generate-otp",
       //   { phone: encodedEncryptedPhone }, // Payload data
-        
+
       // );
 
       console.log("Response:", response);
@@ -77,7 +80,6 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
     postdata(data);
     reset();
   };
-  
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
@@ -93,11 +95,13 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
             {...register("mobileNumber")}
             maxLength={10}
           />
-          {/* {errors.mobileNumber && (
+          {errors.mobileNumber && (
             <p className="text-xs w-full block text-red-500 mt-1">
               {errors.mobileNumber.message}
             </p>
           )}
+         {/* {errors.mobileNumber && <ToastNotification message={errors.mobileNumber.message} type="error" />}
+         {mobError && <ToastNotification message={mobError} type="error" />} */}
         </div>
 
         <div className="feild w-full md:max-w-80">
@@ -117,6 +121,9 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
       {mobError && (
         <p className="text-xs text-red-500 mt-1 text-center">{mobError}</p>
       )}
+      {/* {mobError && (
+        <ToastNotification message={mobError} type="error" />
+      )} */}
     </>
   );
 }

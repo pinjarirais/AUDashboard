@@ -6,7 +6,7 @@ function App() {
   
   return (
     <>
-    <ToastContainer/>
+    <ToastContainer limit={1}/>
      <Layout />
     </>
   );
