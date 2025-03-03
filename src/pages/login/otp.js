@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import CountdownTimer from "../../component/counttime";
+import ToastNotification from "../../component/ToastNotification";
 
 const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 char
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
@@ -118,6 +119,9 @@ function OTP({ getmobiledata, mobileresponse }) {
             {mobileresponse}
           </p>
         )}
+           {mobileresponse && mobileresponse.trim() !== "" && (
+            <ToastNotification message={mobileresponse} type="success" />
+          )}
       </div>
 
       <div className="feild w-full md:max-w-80 mt-6">

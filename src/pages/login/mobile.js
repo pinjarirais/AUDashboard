@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import ToastNotification from "../../component/ToastNotification";
 
 const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
@@ -97,6 +98,9 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
               {errors.mobileNumber.message}
             </p>
           )}
+             {errors.mobileNumber && (
+                  <ToastNotification message={errors.mobileNumber.message} type="error" />
+                )}
         </div>
 
         <div className="feild w-full md:max-w-80">
