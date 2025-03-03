@@ -20,7 +20,7 @@ function Dashboard() {
 
   const [localtoken, setLocalToken] = useState(authuser);
   let [userData, isLoding, isError, exlData] = useDataFetch(
-    localtoken == "AUS USER" ? AUS : CH,
+    localtoken == "AUS_USER" ? AUS : CH,
     token
   );
 
@@ -58,7 +58,7 @@ function Dashboard() {
               <div className="flex justify-center items-center h-[400px]">
                 <h2>Loading...</h2>
               </div>
-            ) : localtoken == "AUS USER" ? (
+            ) : localtoken == "AUS_USER" ? (
               <AUStable
                 userData={userData}
                 exlData={exlData}

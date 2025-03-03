@@ -22,7 +22,7 @@ function OTP({ getmobiledata, mobileresponse }) {
   });
 
   const { register, handleSubmit, formState, reset } = useForm({
-    defaultValues: { mobileNumber: getmobiledata },
+    defaultValues: { mobileNumber: decryptAES(getmobiledata)},
     resolver: zodResolver(otpschema),
     mode: "onChange",
   });
@@ -39,6 +39,18 @@ function OTP({ getmobiledata, mobileresponse }) {
       padding: CryptoJS.pad.Pkcs7,
     });
     return encrypted.toString();
+  }
+
+  // AES Encryption function for OTP
+  function decryptAES(text) {
+    const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
+    const iv = CryptoJS.enc.Utf8.parse(IV);
+    const decrypted = CryptoJS.AES.decrypt(text, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8); // Properly decode decrypted text
   }
 
  async function postdata(data) {
@@ -100,6 +112,12 @@ function OTP({ getmobiledata, mobileresponse }) {
           readOnly
           {...register("mobileNumber")}
         />
+
+        {mobileresponse && (
+          <p className="text-xs w-full block text-green-500 mt-1">
+            {mobileresponse}
+          </p>
+        )}
       </div>
 
       <div className="feild w-full md:max-w-80 mt-6">
@@ -123,11 +141,7 @@ function OTP({ getmobiledata, mobileresponse }) {
           </p>
         )}
 
-        {mobileresponse && (
-          <p className="text-xs w-full block text-green-500 mt-1">
-            {mobileresponse}
-          </p>
-        )}
+        
 
         {errors.otpfield && (
           <p className="text-xs w-full block text-red-500 mt-1">
@@ -137,7 +151,7 @@ function OTP({ getmobiledata, mobileresponse }) {
       </div>
 
       <div className="feild w-full md:max-w-80">
-        <div className="flex justify-between mt-1">
+        <div className="flex justify-end mt-1">
           <div>
             <button
               disabled={!isTimer}
