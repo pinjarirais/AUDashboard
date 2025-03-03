@@ -5,6 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../../component/counttime";
+import { ToastContainer } from "react-toastify";
+import ToastNotification from "../../component/ToastNotifications";
+
 
 function OTP({ getmobiledata, mobileresponse }) {
   let navigate = useNavigate();
@@ -37,7 +40,7 @@ function OTP({ getmobiledata, mobileresponse }) {
         .post(
           `http://localhost:8080/api/auth/validate-otp?phone=${data.mobileNumber}&otp=${data.otpfield}`
         )
-        // .then((res) => console.log("axios response >>>>>>>>>", res));
+      // .then((res) => console.log("axios response >>>>>>>>>", res));
       console.log("data response >>>>>", response);
 
       //const authorizationHeader = response.headers["Authorization"];
@@ -112,13 +115,16 @@ function OTP({ getmobiledata, mobileresponse }) {
               {responseError.code}
             </p>
           )}
-
+          {/* 
           {mobileresponse && (
             <p className="text-xs w-full block text-green-500 mt-1">
               {mobileresponse}
             </p>
-          )}
+          )} */}
 
+          {mobileresponse && mobileresponse.trim() !== "" && (
+            <ToastNotification message={mobileresponse} type="success" />
+          )}
           {errors.otpfield && (
             <p className="text-xs w-full block text-red-500 mt-1">
               {errors.otpfield.message}

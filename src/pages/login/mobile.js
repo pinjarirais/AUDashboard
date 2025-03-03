@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import ToastNotification from "../../component/ToastNotifications";
 
 function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
   const [mobError, setMobError] = useState("");
@@ -48,7 +50,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
     postdata(data);
     reset();
   };
-
+  
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
@@ -64,12 +66,14 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
             {...register("mobileNumber")}
             maxLength={10}
           />
-          {errors.mobileNumber && (
+          {/* {errors.mobileNumber && (
             <p className="text-xs w-full block text-red-500 mt-1">
               {errors.mobileNumber.message}
             </p>
-          )}
-
+          )} */}
+          {errors.mobileNumber && (
+                  <ToastNotification message={errors.mobileNumber.message} type="error" />
+                )}
           {/* {mobError && (
             <p className="text-xs w-full block text-red-500 mt-1">{mobError}</p>
           )} */}
