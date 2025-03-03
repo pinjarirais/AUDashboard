@@ -22,7 +22,7 @@ function Layout() {
                 {/* <Route path="/details" element={<Details />} /> */}
                 {/* <Route path="/userForms" element={<UserForms />} /> */}
                 <Route path="/uploaddata" element={<UploadData />} />
-                <Route path="/cardDetails" element={<CardDetails />} />
+                <Route path="/cardDetails/:id" element={<CardDetails />} />
                 <Route path="/EditProfile" element={<EditProfile />} />
                 <Route path="/ChangePin" element={<ChangePin />} />
               </Route>

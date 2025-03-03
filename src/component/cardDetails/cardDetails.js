@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 
 function CardDetails() {
+  const {id} = useParams();
+  console.log("cardNumber >>>>>", id)
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [transactions, setTransactions] = useState([]);
