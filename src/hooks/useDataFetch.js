@@ -1,9 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const useDataFetch = (url, token = null) => {  
-
-  
+const useDataFetch = (url, token = null) => {
   const [userData, setUserData] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -26,7 +24,7 @@ const useDataFetch = (url, token = null) => {
       setUserData(response.data);
       setIsLoding(false);
     } catch (error) {
-        setIsError(error);
+      setIsError(error);
     }
   }
 

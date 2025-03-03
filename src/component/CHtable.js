@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Pagination from "./pagination";
 import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function CHtable({ userData }) {
   const [currentpg, setCurrentPg] = useState(0);

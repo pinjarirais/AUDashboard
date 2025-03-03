@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from "react";
+//import { useOutletContext } from "react-router-dom";
 import useDataFetch from "../hooks/useDataFetch";
 import CHtable from "../component/CHtable";
 import AUStable from "../component/AUStable";
-
-
+import { useData } from "../component/dataProvider";
 
 function Dashboard() {
-  const token = JSON.parse(localStorage.getItem("token"))
+  //const { setTitle } = useOutletContext(); 
+  const { setSharedData } = useData(); 
+  const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
   const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
 
-   const [currentpg, setCurrentPg] = useState(0);
-  
+  const [currentpg, setCurrentPg] = useState(0);
+
   console.log("authuser >>>>>>>", authuser);
   const AUS = `http://localhost:8081/api/cardholders/ausUsers/1/cardholders?page=${currentpg}&size=10`;
   const CH = `http://localhost:8081/api/cardholders/phone/${mobileNumber}`;
-  
 
   const [localtoken, setLocalToken] = useState(authuser);
-  let [userData, isLoding, isError, exlData] = useDataFetch(localtoken == "AUS USER" ? AUS : CH, token);
+  let [userData, isLoding, isError, exlData] = useDataFetch(
+    localtoken == "AUS USER" ? AUS : CH,
+    token
+  );
 
-  console.log("userData >>>>>>>>", userData)
+  console.log("userData >>>>>>>>", userData);
+
+  if(userData){
+    setSharedData(userData)
+  }
+
+  
 
   return isError ? (
     <div className="flex justify-center items-center h-[400px] ">
@@ -49,7 +59,12 @@ function Dashboard() {
                 <h2>Loading...</h2>
               </div>
             ) : localtoken == "AUS USER" ? (
-              <AUStable userData={userData} exlData={exlData} setCurrentPg={setCurrentPg} currentpg={currentpg} />
+              <AUStable
+                userData={userData}
+                exlData={exlData}
+                setCurrentPg={setCurrentPg}
+                currentpg={currentpg}
+              />
             ) : (
               <CHtable userData={userData} />
             )}

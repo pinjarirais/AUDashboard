@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import * as XLSX from "xlsx";
 import { z } from "zod";
 import axios from "axios";
@@ -6,21 +6,44 @@ import axios from "axios";
 const fileSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   email: z.string().email({ message: "Invalid email format" }),
-  phone: z.string().regex(/^\d{10}$/, { message: "Phone Number should be exactly 10 digits." }),
-  pancard_number: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, { message: "Invalid PAN Card format" }),
-  card_number: z.string().regex(/^\d{16}$/, { message: "Card Number should be exactly 16 digits." }),
-  aus_user_id: z.union([z.number().positive(), z.literal(0), z.null(), z.undefined()]).optional(),
-  role_id: z.number().positive({ message: "Role ID must be a positive number" }),
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, {
+      message: "Phone Number should be exactly 10 digits.",
+    }),
+  pancard_number: z
+    .string()
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+      message: "Invalid PAN Card format",
+    }),
+  card_number: z
+    .string()
+    .regex(/^\d{16}$/, { message: "Card Number should be exactly 16 digits." }),
+  aus_user_id: z
+    .union([z.number().positive(), z.literal(0), z.null(), z.undefined()])
+    .optional(),
+  role_id: z
+    .number()
+    .positive({ message: "Role ID must be a positive number" }),
 });
 
-const requiredHeaders = ["name", "email", "phone", "pancard_number", "card_number", "aus_user_id", "role_id"];
+const requiredHeaders = [
+  "name",
+  "email",
+  "phone",
+  "pancard_number",
+  "card_number",
+  "aus_user_id",
+  "role_id",
+];
 
 const ExcelUploader = () => {
+  const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
-  const [errors, setErrors] = useState([]);  
-  const token = JSON.parse(localStorage.getItem("token"))
-
-  console.log("uploadfile >>>>>>>>>", token)
+  const [errors, setErrors] = useState([]);
+  //const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5MzI1MzY4ODAxIiwicm9sZSI6IkFVU19VU0VSIiwiaWF0IjoxNzQwNTYzMjMxLCJleHAiOjE3NDA1NjY4MzF9.yA_Zoc2VfSokpIEZzzJEcxJTxvWPatNTvgKVuG9hcrc'
+  const token = JSON.parse(localStorage.getItem("token"));
+  console.log("fileupload >>>>>>>", token);
 
   const handleFileSelect = (event) => {
     const selectedFile = event.target.files?.[0];
@@ -33,13 +56,13 @@ const ExcelUploader = () => {
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      setErrors(["No file selected. Please choose a file first."]);
+    if (!file || !(file instanceof File)) {
+      setErrors(["Invalid file. Please upload a valid Excel file."]);
       return;
     }
 
     const reader = new FileReader();
-    reader.readAsBinaryString(file);
+
     reader.onload = async (e) => {
       try {
         const binaryStr = e.target?.result;
@@ -54,55 +77,88 @@ const ExcelUploader = () => {
         }
 
         const fileHeaders = Object.keys(data[0]).map((h) => h.toLowerCase());
-        const missingHeaders = requiredHeaders.filter((header) => !fileHeaders.includes(header));
+        const missingHeaders = requiredHeaders.filter(
+          (header) => !fileHeaders.includes(header)
+        );
 
         if (missingHeaders.length > 0) {
           setErrors([`Missing columns: ${missingHeaders.join(", ")}`]);
           return;
         }
 
-        const validatedData = data.map((row, index) => {
-          try {
-            return fileSchema.parse({
-              name: row.name,
-              email: row.email,
-              phone: row.phone.toString(),
-              pancard_number: row.pancard_number,
-              card_number: row.card_number.toString(),
-              aus_user_id: Number(row.aus_user_id),
-              role_id: Number(row.role_id),
-            });
-          } catch (err) {
-            throw new Error(`Row ${index + 2}: ${err.errors.map((e) => e.message).join(", ")}`);
-          }
-        });
+        const validationErrors = [];
+        const validatedData = data
+          .map((row, index) => {
+            try {
+              return fileSchema.parse({
+                name: row.name,
+                email: row.email,
+                phone: row.phone?.toString(),
+                pancard_number: row.pancard_number,
+                card_number: row.card_number?.toString(),
+                aus_user_id: Number(row.aus_user_id),
+                role_id: Number(row.role_id),
+              });
+            } catch (err) {
+              validationErrors.push(
+                `Row ${index + 2}: ${err.errors
+                  .map((e) => e.message)
+                  .join(", ")}`
+              );
+              return null;
+            }
+          })
+          .filter(Boolean);
 
-        await axios.post("http://localhost:8081/api/cardholders/upload-excel", validatedData,
-          {headers: {
-            Authorization: `Bearer ${token}`,
-          },}
+        if (validationErrors.length > 0) {
+          setErrors(validationErrors);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("validatedData", JSON.stringify(validatedData));
+
+        await axios.post(
+          "http://localhost:8081/api/cardholders/upload-excel",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
+
         setErrors([]);
         alert("File uploaded successfully!");
+        setFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       } catch (error) {
         setErrors([error.message || "Invalid Excel file format."]);
       }
     };
+
+    reader.readAsBinaryString(file);
   };
 
   const handleDownload = async () => {
     try {
-      
-      const response = await axios.get("http://localhost:8081/api/cardholders/download-empty-excel", {
-        responseType:"blob",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get(
+        "http://localhost:8081/api/cardholders/download-empty-excel",
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-
-      console.log("download response",response)
-
-      const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -118,14 +174,26 @@ const ExcelUploader = () => {
 
   return (
     <div className="p-4  w-[90vw] mx-auto my-3 text-center">
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileSelect} className="mt-3 border p-2 rounded" />
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept=".xlsx, .xls"
+        onChange={handleFileSelect}
+        className="mt-3 border p-2 rounded"
+      />
       {file && <p className="mt-2 text-green-600">Selected: {file.name}</p>}
 
       <div className="mt-4 flex justify-center gap-4">
-        <button onClick={handleUpload} className="bg-[#6436d7] text-white py-2 px-4 rounded-lg hover:bg-[#502bb5] transition">
+        <button
+          onClick={handleUpload}
+          className="bg-[#6436d7] text-white py-2 px-4 rounded-lg hover:bg-[#502bb5] transition"
+        >
           Upload
         </button>
-        <button onClick={handleDownload} className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">
+        <button
+          onClick={handleDownload}
+          className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition"
+        >
           Download
         </button>
       </div>
