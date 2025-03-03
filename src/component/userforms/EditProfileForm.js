@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const formSchema = z.object({
     debitCardNumber: z.string().regex(/^\d{16}$/, "Debit Card Number must be exactly 16 digits"),
@@ -12,15 +13,19 @@ const formSchema = z.object({
     email: z.string().email("Invalid email format"),
 });
 
-const obj = {
-    name: "Jane Smith1",
-    email: "jane.smith2@example.com",
-    phone: "9767087882",
-    pan_card: "FGHIJ5678K",
-    cardNumber: "2345678901234567"
-};
+// const obj = {
+//     name: "Jane Smith1",
+//     email: "jane.smith2@example.com",
+//     phone: "9767087882",
+//     pan_card: "FGHIJ5678K",
+//     cardNumber: "2345678901234567"
+// };
 
 const EditProfileForm = () => {
+    const location = useLocation();
+    const userData = location.state[0] || {};
+    console.log("Edit form page", userData)
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
@@ -29,11 +34,11 @@ const EditProfileForm = () => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            debitCardNumber: obj.cardNumber,
-            name: obj.name,
-            panCardNumber: obj.pan_card,
-            mobileNumber: obj.phone,
-            email: obj.email,
+            debitCardNumber: userData.cardNumber,
+            name: userData.name,
+            panCardNumber: userData.pancardNumber,
+            mobileNumber: userData.phone,
+            email: userData.email,
         },
         resolver: zodResolver(formSchema),
         mode: "onChange",

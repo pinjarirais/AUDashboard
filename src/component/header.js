@@ -50,7 +50,7 @@ function Header() {
           </button>
 
           {isOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md">
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-10">
               <div className="p-3 border-b border-gray-200">
                 <p className="text-gray-700 font-semibold">{sharedData.name}</p>
                 <p className="text-sm text-gray-500">{sharedData.email}</p>

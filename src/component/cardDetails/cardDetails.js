@@ -2,10 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
+import useDataFetch from "../../hooks/useDataFetch";
 
 function CardDetails() {
   const {id} = useParams();
-  console.log("cardNumber >>>>>", id)
+  console.log("card id >>>>>", id)
+  const token = JSON.parse(localStorage.getItem("token"));
+  let chUserAPI = "http://localhost:8081/api/cardholders/phone/9767087882"
+  let [userData, isLoding, isError, exlData] = useDataFetch(chUserAPI, token);
+
+  console.log("card detail page userData >>>>>", userData)
+
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -13,6 +20,7 @@ function CardDetails() {
   const [pieChartData, setPieChartData] = useState([]);
 
   useEffect(() => {
+    
     fetch("https://dummyjson.com/carts")
       .then((response) => response.json())
       .then((data) => {
@@ -114,7 +122,7 @@ function CardDetails() {
 
             <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
               <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                <Link to="/EditProfile">Edit Profile</Link>
+                <Link to="/EditProfile" state={userData}>Edit Profile</Link>
               </button>
               <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
                 <Link to="/ChangePin">Change Pin</Link>

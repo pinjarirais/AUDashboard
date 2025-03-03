@@ -47,14 +47,13 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
       const encryptedPhone = encryptAES(data.mobileNumber);
       console.log("Encrypted Phone:", encryptedPhone);
 
-
       const payload = { phone: encryptedPhone };
 
       const response = await axios.post(
         "http://localhost:8080/api/auth/generate-otp",
-        payload, 
+        payload,
         {
-          headers: { "Content-Type": "application/json" }, 
+          headers: { "Content-Type": "application/json" },
         }
       );
 
