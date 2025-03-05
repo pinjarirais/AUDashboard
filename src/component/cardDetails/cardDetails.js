@@ -22,11 +22,11 @@ function CardDetails() {
     fetchAllCards();
   }, []);
 
-  useEffect(() => {
-    if (cards.length > 0) {
-      toast.success(`${cardNo} data loaded successfully`);
-    }
-  }, [cards]);
+  // useEffect(() => {
+  //   if (cards.length > 0) {
+  //     toast.success(`${cardNo} data loaded successfully`);
+  //   }
+  // }, [cards]);
 
   const fetchAllCards = async () => {
     try {
@@ -98,7 +98,7 @@ function CardDetails() {
                   {cards.length > 0 ? (
                     cards.map((card) => (
                       <div key={card.id} className="w-full mb-2">
-                        {/* <ToastNotification message={`${cardNo} data loaded successfully`} type="success" /> */}
+                        <ToastNotification message={`${cardNo} data loaded successfully`} type="success" />
                         <label className="block w-full mx-auto md:ml-3 text-center md:text-left">
                           {/* <input
                             type="radio"

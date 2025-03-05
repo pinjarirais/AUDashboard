@@ -1,28 +1,46 @@
 import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ToastNotification = ({ message, type }) => {
-  console.log("message",message,"type",type)
   const toastId = useRef(null);
 
   useEffect(() => {
     if (message) {
-      if (toastId.current) {
-        toast.dismiss(toastId.current);
+      if (!toast.isActive(toastId.current)) {
+        toastId.current = toast[type](message, {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+          progressClassName: "custom-progress",
+          style: {
+            backgroundColor: "#9a48a9",
+            color: "#fff",
+          },
+        });
       }
-      toastId.current = toast[type](message, {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
     }
-  }, [message, type]);                                                                                  
+  }, [message, type]);
 
-  return null;
+  return (
+    <>
+      <style>
+        {`
+          .custom-progress {
+            background-color: #5b217e !important; 
+          }
+
+          .Toastify__toast input[type="checkbox"] {
+            accent-color: #5b217e !important; 
+          }
+        `}
+      </style>
+    </>
+  );
 };
 
 export default ToastNotification;
