@@ -4,6 +4,8 @@ import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import { FadeLoader } from "react-spinners";
+import ToastNotification from "../../component/ToastNotification";
+import { toast } from "react-toastify";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
@@ -11,6 +13,7 @@ function CardDetails() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
+
   const { cardNo } = useParams();
   // console.log("cardNo",cardNo);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,11 +22,16 @@ function CardDetails() {
     fetchAllCards();
   }, []);
 
+  useEffect(() => {
+    if (cards.length > 0) {
+      toast.success(`${cardNo} data loaded successfully`);
+    }
+  }, [cards]);
+
   const fetchAllCards = async () => {
     try {
       const response = await axios.get("https://dummyjson.com/carts");
       setIsLoading(false);
-
       const fetchedCards = response.data.carts.slice(0, 1);
       setCards(fetchedCards);
 
@@ -90,6 +98,7 @@ function CardDetails() {
                   {cards.length > 0 ? (
                     cards.map((card) => (
                       <div key={card.id} className="w-full mb-2">
+                        {/* <ToastNotification message={`${cardNo} data loaded successfully`} type="success" /> */}
                         <label className="block w-full mx-auto md:ml-3 text-center md:text-left">
                           {/* <input
                             type="radio"

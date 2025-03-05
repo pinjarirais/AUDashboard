@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 
 const ToastNotification = ({ message, type }) => {
+  console.log("message",message,"type",type)
   const toastId = useRef(null);
 
   useEffect(() => {
