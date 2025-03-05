@@ -9,6 +9,7 @@ import UploadData from "../pages/login/uploaddata";
 import CardDetails from "./cardDetails/cardDetails";
 import ChangePin from "./userforms/ChangePin";
 import EditProfile from "./userforms/EditProfile";
+import TestInfiniteScoll from "./TestInfiniteScoll";
 
 function Layout() {
   return (
@@ -22,9 +23,11 @@ function Layout() {
                 {/* <Route path="/details" element={<Details />} /> */}
                 {/* <Route path="/userForms" element={<UserForms />} /> */}
                 <Route path="/uploaddata" element={<UploadData />} />
-                <Route path="/cardDetails/:id" element={<CardDetails />} />
+                {/* <Route path="/cardDetails/:id" element={<CardDetails />} /> */}
+                <Route path="/cardDetails/:cardNo" element={<CardDetails />} />
                 <Route path="/EditProfile" element={<EditProfile />} />
                 <Route path="/ChangePin" element={<ChangePin />} />
+                <Route path="/testScroll" element={<TestInfiniteScoll />} />
               </Route>
             </Routes>
         </div>

@@ -14,7 +14,7 @@ function Login() {
   console.log(getmobiledata);
   return (
     <>
-      <div className="flex flex-col md:flex-row h-[100vh]">
+      <div className="flex flex-col md:flex-row h-[100vh] w-full">
         <div className="bgImg w-full md:w-1/2 bg-[#6d3078] hidden md:flex">
           <img
             className="self-center justify-self-center m-auto"

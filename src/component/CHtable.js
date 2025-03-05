@@ -66,7 +66,7 @@ function CHtable({ userData }) {
                 <tr key={item.id}>
                   <td className="border border-gray-300 p-2">{item.id}</td>
                   <td className="border border-gray-300 p-2">
-                  <Link to={`/cardDetails/${item.cardNumber}`}>{item.cardNumber}</Link></td>
+                  <Link className="bg-blue-700 inline-flex h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md"  to={`/cardDetails/${item.cardNumber}`}>{item.cardNumber}</Link></td>
                   <td className="border border-gray-300 p-2">
                     {item.name}
                   </td>

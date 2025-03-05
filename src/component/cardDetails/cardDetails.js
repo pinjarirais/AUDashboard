@@ -82,22 +82,23 @@ function CardDetails() {
       ) : (
         <div className="px-2 lg:px-10">
           <div className="dashboard-wrap">
-            <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-screen">
+            <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-[85vh]">
               <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
-                <div className="w-full space-y-3 mb-5 md:mb-0">
+              <div className="flex flex-wrap flex-col justify-between h-full pb-[20px] relative">
+              <div className="space-y-3 mb-5 md:mb-0">
                   <label className="block text-sm/6 text-gray-700 font-bold text-center md:text-left">My Cards</label>
                   {cards.length > 0 ? (
                     cards.map((card) => (
                       <div key={card.id} className="w-full mb-2">
                         <label className="block w-full mx-auto md:ml-3 text-center md:text-left">
-                          <input
+                          {/* <input
                             type="radio"
                             name="card"
                             value={card.id}
                             checked={selectedCard === card.id}
                             onChange={() => handleCardSelection(card.id)}
                             className="mr-2"
-                          />
+                          /> */}
                           Card {card.id}
                         </label>
                         {selectedCard === card.id && (
@@ -120,6 +121,7 @@ function CardDetails() {
                             </div>
                           </div>
                         )}
+                    
                       </div>
                     ))
                   ) : (
@@ -128,6 +130,12 @@ function CardDetails() {
                     </div>
                   )}
                 </div>
+                <div className="w-full md:absolute flex flex-row gap-3 md:text-[12px] lg:text-[16px] justify-end md:bottom-0">
+                          <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+                            <Link to="">Billing</Link>
+                          </button>
+                        </div>
+              </div>
               </div>
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
                 <div className="flex flex-col md:flex-row">
