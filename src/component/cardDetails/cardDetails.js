@@ -30,27 +30,36 @@ function CardDetails() {
 
   const fetchAllCards = async () => {
     try {
-      const response = await axios.get("https://dummyjson.com/carts");
+      setIsLoading(true);
+      const apiCalls = [
+        axios.get("https://dummyjson.com/carts"), 
+        axios.get("https://dummyjson.com/users"), 
+        axios.get("https://dummyjson.com/products") 
+      ];
+      const [cartsResponse, usersResponse, productsResponse] = await Promise.all(apiCalls);
       setIsLoading(false);
-      const fetchedCards = response.data.carts.slice(0, 1);
+      const fetchedCards = cartsResponse.data.carts.slice(0, 1);
       setCards(fetchedCards);
-
       const allTransactions = {};
       fetchedCards.forEach((card) => {
         allTransactions[card.id] = transformTransactions(card);
       });
-
+      
       setTransactionsData(allTransactions);
       if (fetchedCards.length > 0) {
         const defaultCard = fetchedCards[0].id;
         setSelectedCard(defaultCard);
         updateCardData(allTransactions[defaultCard]);
       }
+      // console.log("Users Data:", usersResponse.data);
+      // console.log("Products Data:", productsResponse.data);
+  
     } catch (error) {
       setIsLoading(false);
-      console.error("Error fetching cards:", error);
+      console.error("Error fetching data:", error);
     }
   };
+  
 
   const transformTransactions = (card) => {
     return card.products.map((product, index) => ({
