@@ -30,8 +30,12 @@ const ToastNotification = ({ message, type }) => {
     <>
       <style>
         {`
-          .custom-progress {
-            background-color: #5b217e !important; 
+           .custom-progress {
+            background-color: #ffffff !important;
+          }
+
+          .Toastify__progress-bar--default {
+            background-color: #ffffff !important;
           }
 
           .Toastify__toast input[type="checkbox"] {

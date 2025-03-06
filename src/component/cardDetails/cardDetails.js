@@ -139,11 +139,7 @@ function CardDetails() {
                     </div>
                   )}
                 </div>
-                <div className="w-full md:absolute flex flex-row gap-3 md:text-[12px] lg:text-[16px] justify-end md:bottom-0">
-                          <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                            <Link to="">Billing</Link>
-                          </button>
-                        </div>
+            
               </div>
               </div>
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
@@ -187,7 +183,13 @@ function CardDetails() {
                       )}
                     </tbody>
                   </table>
+                 
                 </div>
+                <div className="flex flex-col-reverse flex-wrap justify-evenly content-end pt-4">
+                          <button className="w-[100px] bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+                            <Link to="">Billing</Link>
+                          </button>
+                        </div>
               </div>
             </div>
           </div>
