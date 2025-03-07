@@ -3,17 +3,17 @@ import Pagination from "./pagination";
 import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
 
-function AUStable({ userData, currentpg, setCurrentPg, totalLength }) {
+function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
   //const [currentpg, setCurrentPg] = useState(0);
   const [ExcelData, setExcelData] = useState([]);
   const datalength = userData?.cardHolders?.length;
   //const numberpg = Math.ceil(datalength / 10);
-  const numberpg = Math.ceil(totalLength / 10);
+  const numberpg = Math.ceil(AUStotalLenght / 10);
   const pagenumber = [...Array(numberpg || 1).keys()];
   //const startpg = currentpg * 10;
   //const endpg = startpg + 10;
 
-  console.log("totalLength >>>>>>>>", totalLength)
+  console.log("totalLength >>>>>>>>", AUStotalLenght)
 
   const fileName = "CHUsers"; // here enter filename for your excel file
   useEffect(() => {

@@ -34,9 +34,9 @@ const EditProfileForm = () => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            debitCardNumber: userData.name,
+            debitCardNumber: userData.cardNumber,
             name: userData.name,
-            panCardNumber: userData.lname,
+            panCardNumber: userData.pancardNumber,
             mobileNumber: userData.phone,
             email: userData.email,
         },

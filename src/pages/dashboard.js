@@ -35,11 +35,15 @@ function Dashboard() {
     localStorage.setItem("profilemail", JSON.stringify(userData.email));
   }
 
-  useEffect(()=>{
-    if (userData?.totalElements !== undefined) {
-      setTotalLength(userData?.totalElements);
-    }
-  },[])
+  let AUStotalLenght =  userData?.totalElements;
+
+  console.log("AUStotalLenght >>>>>>>", AUStotalLenght)
+
+  // useEffect(()=>{
+  //   if (userData?.totalElements !== undefined) {
+  //     setTotalLength(userData?.totalElements);
+  //   }
+  // },[])
 
   return isError ? (
     <div className="flex justify-center items-center h-[400px] ">
@@ -73,7 +77,7 @@ function Dashboard() {
                 exlData={exlData}
                 setCurrentPg={setCurrentPg}
                 currentpg={currentpg}
-                totalLength={totalLength}
+                AUStotalLenght={AUStotalLenght}
               />
             ) : (
               <CHtable userData={userData} />
