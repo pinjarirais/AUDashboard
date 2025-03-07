@@ -23,8 +23,8 @@ const formSchema = z.object({
 
 const EditProfileForm = () => {
     const location = useLocation();
-    const userData = location.state[0] || {};
-    console.log("Edit form page", userData)
+    const userData = location.state || {};
+    console.log("Edit form page", location)
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
@@ -34,9 +34,9 @@ const EditProfileForm = () => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            debitCardNumber: userData.cardNumber,
+            debitCardNumber: userData.name,
             name: userData.name,
-            panCardNumber: userData.pancardNumber,
+            panCardNumber: userData.lname,
             mobileNumber: userData.phone,
             email: userData.email,
         },

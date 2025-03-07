@@ -5,43 +5,50 @@ import axios from "axios";
 
 const fileSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
+  phone: z.string().regex(/^\d{10}$/, {
+    message: "Phone Number should be exactly 10 digits.",
+  }),
   email: z.string().email({ message: "Invalid email format" }),
-  phone: z
-    .string()
-    .regex(/^\d{10}$/, {
-      message: "Phone Number should be exactly 10 digits.",
-    }),
-  pancard_number: z
-    .string()
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
-      message: "Invalid PAN Card format",
-    }),
-  card_number: z
-    .string()
-    .regex(/^\d{16}$/, { message: "Card Number should be exactly 16 digits." }),
-  aus_user_id: z
-    .union([z.number().positive(), z.literal(0), z.null(), z.undefined()])
-    .optional(),
   role_id: z
     .number()
     .positive({ message: "Role ID must be a positive number" }),
+  aus_user_id: z
+    .union([z.number().positive(), z.literal(0), z.null(), z.undefined()])
+    .optional(),
+  pancard_number: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+    message: "Invalid PAN Card format",
+  }),
+  card_number: z.string().regex(/^\d{16}$/, {
+    message: "Card Number should be exactly 16 digits.",
+  }),
+  pin: z.string().regex(/^\d{6}$/, {
+    message: "PIN should be exactly 6 digits.",
+  }),
+  cvv: z.string().regex(/^\d{3}$/, {
+    message: "CVV should be exactly 3 digits.",
+  }),
+  ch_user_id: z
+    .number()
+    .positive({ message: "ch_user_id must be a positive number" }),
 });
 
 const requiredHeaders = [
   "name",
-  "email",
   "phone",
+  "email",
+  "role_id",
+  "aus_user_id",
   "pancard_number",
   "card_number",
-  "aus_user_id",
-  "role_id",
+  "pin",
+  "cvv",
+  "ch_user_id",
 ];
 
 const ExcelUploader = () => {
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState([]);
-  //const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5MzI1MzY4ODAxIiwicm9sZSI6IkFVU19VU0VSIiwiaWF0IjoxNzQwNTYzMjMxLCJleHAiOjE3NDA1NjY4MzF9.yA_Zoc2VfSokpIEZzzJEcxJTxvWPatNTvgKVuG9hcrc'
   const token = JSON.parse(localStorage.getItem("token"));
   console.log("fileupload >>>>>>>", token);
 
@@ -92,12 +99,15 @@ const ExcelUploader = () => {
             try {
               return fileSchema.parse({
                 name: row.name,
-                email: row.email,
                 phone: row.phone?.toString(),
+                email: row.email,
+                role_id: Number(row.role_id),
+                aus_user_id: Number(row.aus_user_id),
                 pancard_number: row.pancard_number,
                 card_number: row.card_number?.toString(),
-                aus_user_id: Number(row.aus_user_id),
-                role_id: Number(row.role_id),
+                pin: row.pin?.toString(),
+                cvv: row.cvv?.toString(),
+                ch_user_id: Number(row.ch_user_id),
               });
             } catch (err) {
               validationErrors.push(
@@ -173,7 +183,7 @@ const ExcelUploader = () => {
   };
 
   return (
-    <div className="p-4  w-[90vw] mx-auto my-3 text-center">
+    <div className="p-4 w-[90vw] mx-auto my-3 text-center">
       <input
         type="file"
         ref={fileInputRef}

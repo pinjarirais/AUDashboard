@@ -62,15 +62,16 @@ function CHtable({ userData }) {
           </thead>
           <tbody>
             {userData &&
-              userData?.slice(startpg, endpg).map((item) => (
+              userData?.chUsers?.map((item) => (
                 <tr key={item.id}>
                   <td className="border border-gray-300 p-2">{item.id}</td>
                   <td className="border border-gray-300 p-2">
-                  <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>{item.cardNumber}</Link></td>
+                  <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>
+                  {item.cardHolders[0].cardNumber}</Link></td>
                   <td className="border border-gray-300 p-2">
                     {item.name}
                   </td>
-                  <td className="border border-gray-300 p-2">{item.pancardNumber}</td>                  
+                  <td className="border border-gray-300 p-2">{item.cardHolders[0].pancardNumber}</td>                  
                   <td className="border border-gray-300 p-2">{item.email}</td>
                   <td className="border border-gray-300 p-2">{item.phone}</td>                  
                 </tr>

@@ -3,24 +3,26 @@ import Pagination from "./pagination";
 import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
 
-function AUStable({ userData, currentpg, setCurrentPg }) {
+function AUStable({ userData, currentpg, setCurrentPg, totalLength }) {
   //const [currentpg, setCurrentPg] = useState(0);
   const [ExcelData, setExcelData] = useState([]);
   const datalength = userData?.cardHolders?.length;
   //const numberpg = Math.ceil(datalength / 10);
-  const numberpg = Math.ceil(50 / 10);
+  const numberpg = Math.ceil(totalLength / 10);
   const pagenumber = [...Array(numberpg || 1).keys()];
   //const startpg = currentpg * 10;
   //const endpg = startpg + 10;
 
+  console.log("totalLength >>>>>>>>", totalLength)
+
   const fileName = "CHUsers"; // here enter filename for your excel file
   useEffect(() => {
     // reshaping the array
-    const customHeadings = userData?.cardHolders?.map((item) => ({
+    const customHeadings = userData?.chUsers?.map((item) => ({
       Id: item.id,
-      "Card Number": item.cardNumber,
+      "Card Number": item.cardHolders[0]?.cardNumber,
       Name: item.name,
-      "Pancard Number": item.pancardNumber,
+      "Pancard Number": item.cardHolders[0]?.pancardNumber,
       Email: item.email,
       Phone: item.phone,
     }));
@@ -64,16 +66,18 @@ function AUStable({ userData, currentpg, setCurrentPg }) {
             </tr>
           </thead>
           <tbody>
-            {userData?.cardHolders &&
-              userData?.cardHolders?.map((item) => (
+            {userData?.chUsers &&
+              userData?.chUsers?.map((item) => (
                 <tr key={item.id}>
                   <td className="border border-gray-300 p-2">{item.id}</td>
                   <td className="border border-gray-300 p-2">
-                    <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>{item.cardNumber}</Link>
+                    <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>
+                      {item?.cardHolders[0]?.cardNumber}
+                    </Link>
                   </td>
                   <td className="border border-gray-300 p-2">{item.name}</td>
                   <td className="border border-gray-300 p-2">
-                    {item.pancardNumber}
+                    {item?.cardHolders[0]?.pancardNumber}
                   </td>
                   <td className="border border-gray-300 p-2">{item.email}</td>
                   <td className="border border-gray-300 p-2">{item.phone}</td>
