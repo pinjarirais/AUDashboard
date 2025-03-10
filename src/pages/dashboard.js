@@ -21,23 +21,21 @@ function Dashboard() {
 
   const [localtoken, setLocalToken] = useState(authuser);
   let [userData, isLoding, isError, exlData] = useDataFetch(
-    localtoken == "AUS USER" ? AUS : CH,
+    localtoken === "AUS USER" ? AUS : CH,
     token
   );
 
   console.log("userData >>>>>>>>", userData);
 
-  
-
-  if (userData?.name !== undefined && userData?.email !== undefined) {
+  if (userData?.ausUser?.name !== undefined && userData?.ausUser?.email !== undefined) {
     // setSharedData(userData)
-    localStorage.setItem("profilename", JSON.stringify(userData.name));
-    localStorage.setItem("profilemail", JSON.stringify(userData.email));
+    localStorage.setItem("profilename", JSON.stringify(userData?.ausUser?.name));
+    localStorage.setItem("profilemail", JSON.stringify(userData?.ausUser?.email));
   }
 
-  let AUStotalLenght =  userData?.totalElements;
+  let AUStotalLenght = userData?.totalElements;
 
-  console.log("AUStotalLenght >>>>>>>", AUStotalLenght)
+  console.log("AUStotalLenght >>>>>>>", AUStotalLenght);
 
   // useEffect(()=>{
   //   if (userData?.totalElements !== undefined) {
