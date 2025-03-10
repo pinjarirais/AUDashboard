@@ -24,7 +24,7 @@ function CardDetails() {
   console.log("card detail page userData >>>>>", userData)
 
   const { id } = useParams();
-  console.log("id",id,useParams());
+  console.log("id", id, useParams());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -98,6 +98,25 @@ function CardDetails() {
     updateCardData(transactionsData[cardId]);
   };
 
+  const [tableData, setTableData] = useState([]);
+  const [expensesData,setExpensesData]=useState([])
+
+  
+
+  const tableFetchData = async () => {
+    await axios.get(`http://localhost:8082/api/expenses/by-card/${id}`)
+      .then((res) => setTableData(res.data))
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  useEffect(() => {
+    tableFetchData();
+  }, [])
+
+  // console.log(tableData.transactions?.flatMap((txn) => console.log(txn.transactionId)))
+  console.log("tableData", tableData);
+
   return (
     <>
       {isLoading ? (
@@ -134,12 +153,12 @@ function CardDetails() {
                                   <p>Credit Card</p>
                                 </div>
                                 <div className="px-5 py-2">
-                                  <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">{id}</p>
+                                  <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">{tableData.cardHolder.cardNumber}</p>
                                 </div>
                               </div>
                               <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-5">
                                 <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                 <Link to="/EditProfile" state={userData}>Edit Profile</Link>
+                                  <Link to="/EditProfile" state={userData}>Edit Profile</Link>
                                 </button>
                                 <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
                                   <Link to="/ChangePin">Change Pin</Link>
@@ -177,20 +196,23 @@ function CardDetails() {
                         <th className="px-4 py-2 text-left border-b">Time</th>
                         <th className="px-4 py-2 text-left border-b">Date</th>
                         <th className="px-4 py-2 text-left border-b">Amount</th>
-                        <th className="px-4 py-2 text-left border-b">Status</th>
+                        {/* <th className="px-4 py-2 text-left border-b">Status</th> */}
                       </tr>
                     </thead>
                     <tbody>
-                      {transactionsData[selectedCard]?.length > 0 ? (
-                        transactionsData[selectedCard].map((transaction, index) => (
+                      {tableData.transactions && tableData.transactions.length > 0 ? (
+                        tableData.transactions.map((transaction, index) => (
                           <tr key={index} className="odd:bg-white even:bg-[#F2F2F2]">
-                            <td className="px-4 py-2 border-b">{transaction.transaction}</td>
-                            <td className="px-4 py-2 border-b">{transaction.time}</td>
-                            <td className="px-4 py-2 border-b">{transaction.date}</td>
+                            <td className="px-4 py-2 border-b">{transaction.transactionId}</td>
+                            <td className="px-4 py-2 border-b">{new Date(transaction.transactionDateTime).toLocaleTimeString()}</td>
+                            <td className="px-4 py-2 border-b">{new Date(transaction.transactionDateTime).toLocaleDateString()}</td>
                             <td className="px-4 py-2 border-b">₹ {transaction.amount}</td>
-                            <td className={`px-4 py-2 border-b font-bold ${transaction.status === "Success" ? "text-green-600" : "text-yellow-600"}`}>
+                            {/* <td
+                              className={`px-4 py-2 border-b font-bold ${transaction.status === "Success" ? "text-green-600" : "text-yellow-600"
+                                }`}
+                            >
                               {transaction.status}
-                            </td>
+                            </td> */}
                           </tr>
                         ))
                       ) : (
@@ -200,6 +222,7 @@ function CardDetails() {
                       )}
                     </tbody>
                   </table>
+
 
                 </div>
                 <div className="flex flex-col-reverse flex-wrap justify-evenly content-end pt-4">
