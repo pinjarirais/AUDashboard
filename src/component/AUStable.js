@@ -39,7 +39,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
           </div>
           <div className="ml-4">
             <Link
-              className="bg-blue-700 inline-flex h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md"
+              className="bg-[#6d3078] inline-flex h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md"
               to="/uploaddata"
             >
               Upload Lead
@@ -51,6 +51,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
             pagenumber={pagenumber}
             currentpg={currentpg}
             setCurrentPg={setCurrentPg}
+            AUStotalLenght={AUStotalLenght}
           />
         </div>
       </div>
