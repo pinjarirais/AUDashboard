@@ -6,6 +6,7 @@ import PieChart from "./PieChart";
 import { FadeLoader } from "react-spinners";
 // import ToastNotification from "../../component/ToastNotification";
 import CardList from "./cardList";
+import TransactionHistory from "./transactionHistory";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
@@ -206,7 +207,7 @@ function CardDetails() {
                 <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
 
                 {/*Transaction Table */}
-                <transactionHistory trasactionData={trasactionData} />
+                <TransactionHistory trasactionData={trasactionData} />
               </div>
 
             </div>

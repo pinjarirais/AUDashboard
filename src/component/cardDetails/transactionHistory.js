@@ -1,6 +1,8 @@
-import React from 'react';
+import React from 'react'
 import { Link} from "react-router-dom";
+
 function transactionHistory({trasactionData}) {
+    console.log("trasactionData",trasactionData)
     return (
         <>
             <div className="overflow-x-auto">
