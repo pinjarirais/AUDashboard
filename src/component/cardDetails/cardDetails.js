@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import { FadeLoader } from "react-spinners";
 // import ToastNotification from "../../component/ToastNotification";
-import useDataFetch from "../../hooks/useDataFetch";
+import CardList from "./cardList";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
-  const [transactionsData, setTransactionsData] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
   const [trasactionData, setTransactionData] = useState([]);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
@@ -18,33 +17,34 @@ function CardDetails() {
   const [fromDate, setFromDate] = useState("");
   const [newToDate, setToDate] = useState("");
   const getFormattedDate = (date) => date.toISOString().split("T")[0];
-  const [chUserCardData, setChUserCardData] = useState([]);
   const [cardID, setCardID] = useState()
 
+
+  //toDate and fromDate logic
   const currentDate = new Date();
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
   const fromNintyDays = getFormattedDate(threeMonthsAgo);
   const toDate = getFormattedDate(currentDate);
   const token = JSON.parse(localStorage.getItem("token"));
+  const formatDate = (date) => date.toISOString().split("T")[0];
+  const { id } = useParams();
+
   useEffect(() => {
     const currentDate = new Date();
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
-
-    const formatDate = (date) => date.toISOString().split("T")[0];
-
     setFromDate(formatDate(threeMonthsAgo));
     setToDate(formatDate(currentDate));
   }, []);
-  // let chUserAPI = "http://localhost:8081/api/cardholders/phone/9767087882";
-  // let [userData, isLoding, isError, exlData] = useDataFetch(chUserAPI, token);
-  const { id } = useParams();
 
   useEffect(() => {
     fetchAllCards();
   }, []);
 
+
+
+  //fetch all card details
   const fetchAllCards = async () => {
     try {
       setIsLoading(true);
@@ -57,7 +57,6 @@ function CardDetails() {
         }
       );
       setIsLoading(false);
-
       const fetchedCards = response.data.cardHolders
       setCards(fetchedCards);
       fetchedCards.forEach((card) => {
@@ -72,6 +71,8 @@ function CardDetails() {
     }
   };
 
+
+  //fetch expenses details
   const fetchTransactionDetails = async (id) => {
     try {
       const response = await axios.get(
@@ -85,11 +86,11 @@ function CardDetails() {
       );
       setIsLoading(false);
       setTransactionData(response.data);
-
       setCardID(response.data)
     } catch (error) {
     }
   };
+
 
   useEffect(() => {
     if (trasactionData?.transactions?.length > 0) {
@@ -100,9 +101,10 @@ function CardDetails() {
     }
   }, [trasactionData, selectedCard]);
 
+
+  //Chart Logic
   const updateCardData = (transactions) => {
     transactions && transactions.sort((a, b) => new Date(a.transactionDateTime) - new Date(b.transactionDateTime));
-
     setLineChartData({
       categories: transactions && transactions.map((txn) => new Date(txn.transactionDateTime).toLocaleDateString()),
       data: transactions && transactions.map((txn) => txn.amount),
@@ -116,17 +118,17 @@ function CardDetails() {
       { name: "Balance", y: remainingBalance > 0 ? remainingBalance : 0 },
     ]);
   };
+
   const handleCardSelection = (cardId) => {
     setSelectedCard(cardId);
-    updateCardData(transactionsData[cardId]);
     setIsLoading(true);
     fetchTransactionDetails(cardId);
   };
 
-  const fetchDataOnDateChange = async (from, to) => {
-    // console.log("selectedCard",selectedCard);
-    try {
 
+  //On Date Change Api
+  const fetchDataOnDateChange = async (from, to) => {
+    try {
       const response = await axios.get(
         `http://localhost:8082/api/expenses/by-card/${selectedCard}/by-date-range?fromDate=${from}&toDate=${to}`,
         {
@@ -147,8 +149,6 @@ function CardDetails() {
     setIsLoading(true)
     fetchDataOnDateChange(fromDate, newToDate);
   };
-
-
   return (
     <>
       {isLoading ? (
@@ -161,60 +161,7 @@ function CardDetails() {
             <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-[85vh]">
 
               {/* Sidebar - Cards List */}
-              <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
-                <div className="flex flex-wrap flex-col justify-between h-full pb-[20px] relative h-[90%] overflow-y-auto scrollbar-hide">
-                  <div className="space-y-3 mb-5 md:mb-0">
-                    <label className="block text-sm/6 text-gray-700 font-bold text-center md:text-left">My Cards</label>
-                    {cards.length > 0 ? (
-                      cards.map((card) => (
-                        <div key={card.id} className="w-full mb-2">
-                          {/* <ToastNotification message={`Data loaded successfully for ${id} `} type="success" /> */}
-                          <label className={`block w-full mx-auto md:ml-3 text-center md:text-left ${selectedCard == card.id ? "font-bold text-[#6d3078]" : ""}`}>
-                            <input
-                              type="radio"
-                              name="card"
-                              value={card.id}
-                              checked={selectedCard === card.id}
-                              onChange={() => handleCardSelection(card.id)}
-                              className="mr-2 accent-[#6d3078]"
-                            />
-                            Card {card.id}
-                          </label>
-                          {selectedCard === card.id && (
-                            <div className="relative w-full show">
-                              <div className="mx-auto md:ml-1 card-bg bg-cover w-[250px] h-[165px] xl:w-[250px] xl:h-[165px] lg:w-[210px] lg:h-[140px] md:w-[170px] md:h-[110px] rounded-[25px] text-white flex flex-col justify-evenly">
-                                <div className="px-5 py-2">
-                                  <p>Credit Card</p>
-                                </div>
-                                <div className="px-5 py-2">
-                                  <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">{card.cardNumber}</p>
-                                </div>
-                              </div>
-                              <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-2 mb-5">
-                                <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                  <Link to="/ChangePin" state={trasactionData}>Change Pin</Link>
-                                </button>
-                              </div>
-                            </div>
-                          )}
-
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex justify-center items-center h-screen">
-                        <FadeLoader color="#9a48a9" />
-                      </div>
-                    )}
-                  </div>
-
-                </div>
-
-                <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
-                  <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                    <Link to="/EditProfile" state={trasactionData}>Edit Profile</Link>
-                  </button>
-                </div>
-              </div>
+              <CardList handleCardSelection={handleCardSelection} cards={cards} selectedCard={selectedCard} trasactionData={trasactionData} />
 
               {/* Charts & Transactions */}
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
@@ -248,54 +195,18 @@ function CardDetails() {
                     </button>
                   </div>
                 </div>
-
-
-
                 <div className="flex flex-col md:flex-row">
                   <div className="w-full md:w-1/2">
-
                     <LineChart categories={lineChartData.categories} data={lineChartData.data} />
-
-
                   </div>
                   <div className="w-full md:w-1/2">
                     <PieChart pieData={pieChartData} />
                   </div>
                 </div>
-
-
                 <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-[#D9D9D9]">
-                        <th className="px-4 py-2">Transaction</th>
-                        <th className="px-4 py-2">Time</th>
-                        <th className="px-4 py-2">Date</th>
-                        <th className="px-4 py-2">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {trasactionData.transactions?.length > 0 ? (
-                        trasactionData.transactions.map((txn, index) => (
-                          <tr key={index} className="odd:bg-white even:bg-[#F2F2F2]">
-                            <td className="px-4 py-2">{txn.transactionId}</td>
-                            <td className="px-4 py-2">{new Date(txn.transactionDateTime).toLocaleTimeString()}</td>
-                            <td className="px-4 py-2">{new Date(txn.transactionDateTime).toLocaleDateString()}</td>
-                            <td className="px-4 py-2">₹ {txn.amount}</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr><td colSpan="4" className="text-center">No Transactions</td></tr>
-                      )}
-                    </tbody>
-                  </table>
-                  <div className="flex flex-col-reverse flex-wrap justify-evenly content-end pt-4">
-                    <button className="w-[100px] bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                      <Link to="">Billing</Link>
-                    </button>
-                  </div>
-                </div>
+
+                {/*Transaction Table */}
+                <transactionHistory trasactionData={trasactionData} />
               </div>
 
             </div>
