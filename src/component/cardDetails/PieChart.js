@@ -9,7 +9,7 @@ const PieChart = ({ pieData }) => {
       type: "pie",
     },
     title: {
-      text: "Current Month Expense",
+      text: "",
     },
     series: [
       {

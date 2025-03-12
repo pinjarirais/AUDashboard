@@ -17,7 +17,7 @@ const LineChart = ({ categories, data }) => {
     //   },
     // },
     title: {
-        text: "Monthly Expense Data",
+        text: "",
       },
       xAxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],

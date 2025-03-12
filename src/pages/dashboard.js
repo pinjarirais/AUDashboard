@@ -53,7 +53,7 @@ function Dashboard() {
         <div className="dashboard-wrap">
           <div className="flex flex-auto justify-between border-b-[1px] py-5 align-middle">
             <div>
-              <h1 className="text-[22px] bold">Dashboard</h1>
+              <h1 className="text-[24px] font-bold">DASHBOARD</h1>
             </div>
             <div className="top-search">
               <input
