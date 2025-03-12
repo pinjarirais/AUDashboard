@@ -11,7 +11,7 @@ function CardDetails() {
   const [cards, setCards] = useState([]);
   const [transactionsData, setTransactionsData] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
-  const [threeMonths, setThreeMonths] = useState([]);
+  const [trasactionData, setTransactionData] = useState([]);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,19 +19,14 @@ function CardDetails() {
   const [newToDate, setToDate] = useState("");
   const getFormattedDate = (date) => date.toISOString().split("T")[0];
   const [chUserCardData, setChUserCardData] = useState([]);
+  const [cardID, setCardID] = useState()
 
   const currentDate = new Date();
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
   const fromNintyDays = getFormattedDate(threeMonthsAgo);
   const toDate = getFormattedDate(currentDate);
-
   const token = JSON.parse(localStorage.getItem("token"));
-  
-
-  // const [fromDate, setFromDate] = useState("");
-  // const [toDate, setToDate] = useState("");
-
   useEffect(() => {
     const currentDate = new Date();
     const threeMonthsAgo = new Date();
@@ -42,22 +37,12 @@ function CardDetails() {
     setFromDate(formatDate(threeMonthsAgo));
     setToDate(formatDate(currentDate));
   }, []);
-
-
-  
-
-  let chUserAPI = "http://localhost:8081/api/cardholders/phone/9767087882";
-  let [userData, isLoding, isError, exlData] = useDataFetch(chUserAPI, token);
-
+  // let chUserAPI = "http://localhost:8081/api/cardholders/phone/9767087882";
+  // let [userData, isLoding, isError, exlData] = useDataFetch(chUserAPI, token);
   const { id } = useParams();
 
-
-
-
   useEffect(() => {
-    // fetchUserData();
     fetchAllCards();
-    fetchThreeMonthTransactions();
   }, []);
 
   const fetchAllCards = async () => {
@@ -66,26 +51,20 @@ function CardDetails() {
       const response = await axios.get(`http://localhost:8081/api/cardholders/chUsers/${id}`,
         {
           headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
-      }
+        }
       );
-      console.log("card resp", response.data);
-      console.log("cardData>>>", response.data.cardHolders)
       setIsLoading(false);
 
-       const fetchedCards = response.data.cardHolders
+      const fetchedCards = response.data.cardHolders
       setCards(fetchedCards);
-      console.log("Fetched Cards:", fetchedCards);
       fetchedCards.forEach((card) => {
-        console.log("inside",card)
-        // allTransactions[card.id] = transformTransactions(card);
       });
-      // setTransactionsData(allTransactions);
-
       if (fetchedCards.length > 0) {
         setSelectedCard(fetchedCards[0].id);
+        fetchTransactionDetails(fetchedCards[0].id)
       }
     } catch (error) {
       setIsLoading(false);
@@ -93,52 +72,43 @@ function CardDetails() {
     }
   };
 
-  // const transformTransactions = (card) => {
-  //   return card.products.map((product, index) => ({
-  //     transaction: `TXN${card.id}${index + 1}`,
-  //     time: new Date().toLocaleTimeString(),
-  //     date: new Date().toLocaleDateString(),
-  //     amount: Math.round(product.price * product.quantity),
-  //     status: Math.random() > 0.5 ? "Success" : "Pending",
-  //   }));
-  // };
-
-  const fetchThreeMonthTransactions = async () => {
+  const fetchTransactionDetails = async (id) => {
     try {
       const response = await axios.get(
         `http://localhost:8082/api/expenses/by-card/${id}/by-date-range?fromDate=${fromNintyDays}&toDate=${toDate}`,
         {
           headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
-      }
+        }
       );
-      setThreeMonths(response.data);
+      setIsLoading(false);
+      setTransactionData(response.data);
+
+      setCardID(response.data)
     } catch (error) {
-      console.error("Error fetching past three months transactions:", error);
     }
   };
 
   useEffect(() => {
-    if (threeMonths?.transactions?.length > 0) {
-      updateCardData(threeMonths.transactions);
+    if (trasactionData?.transactions?.length > 0) {
+      updateCardData(trasactionData.transactions);
     } else {
       setLineChartData([]);
       setPieChartData([]);
     }
-  }, [threeMonths]);
+  }, [trasactionData, selectedCard]);
 
   const updateCardData = (transactions) => {
-    console.log("transactions",transactions);
-    transactions.sort((a, b) => new Date(a.transactionDateTime) - new Date(b.transactionDateTime));
+    transactions && transactions.sort((a, b) => new Date(a.transactionDateTime) - new Date(b.transactionDateTime));
 
     setLineChartData({
-      categories: transactions.map((txn) => new Date(txn.transactionDateTime).toLocaleDateString()),
-      data: transactions.map((txn) => txn.amount),
+      categories: transactions && transactions.map((txn) => new Date(txn.transactionDateTime).toLocaleDateString()),
+      data: transactions && transactions.map((txn) => txn.amount),
     });
 
-    const totalExpense = transactions.reduce((acc, txn) => acc + txn.amount, 0);
+    const totalExpense = transactions && transactions.reduce((acc, txn) => acc + txn.amount, 0);
     const remainingBalance = 1000 - totalExpense;
 
     setPieChartData([
@@ -149,22 +119,25 @@ function CardDetails() {
   const handleCardSelection = (cardId) => {
     setSelectedCard(cardId);
     updateCardData(transactionsData[cardId]);
+    setIsLoading(true);
+    fetchTransactionDetails(cardId);
   };
 
   const fetchDataOnDateChange = async (from, to) => {
+    // console.log("selectedCard",selectedCard);
     try {
-   
+
       const response = await axios.get(
-        `http://localhost:8082/api/expenses/by-card/${id}/by-date-range?fromDate=${from}&toDate=${to}`,
+        `http://localhost:8082/api/expenses/by-card/${selectedCard}/by-date-range?fromDate=${from}&toDate=${to}`,
         {
           headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
-      }
+        }
       );
       setIsLoading(false)
-      setThreeMonths(response.data);
+      setTransactionData(response.data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -172,11 +145,10 @@ function CardDetails() {
 
   const handleShowClick = () => {
     setIsLoading(true)
-    fetchDataOnDateChange(fromDate,newToDate);
+    fetchDataOnDateChange(fromDate, newToDate);
   };
 
- 
-console.log("lineChartData",lineChartData)
+
   return (
     <>
       {isLoading ? (
@@ -220,7 +192,7 @@ console.log("lineChartData",lineChartData)
                               </div>
                               <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-2 mb-5">
                                 <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                  <Link to="/ChangePin">Change Pin</Link>
+                                  <Link to="/ChangePin" state={trasactionData}>Change Pin</Link>
                                 </button>
                               </div>
                             </div>
@@ -239,7 +211,7 @@ console.log("lineChartData",lineChartData)
 
                 <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
                   <button className="w-full bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                    <Link to="/EditProfile">Edit Profile</Link>
+                    <Link to="/EditProfile" state={trasactionData}>Edit Profile</Link>
                   </button>
                 </div>
               </div>
@@ -278,19 +250,19 @@ console.log("lineChartData",lineChartData)
                 </div>
 
 
-                   
+
                 <div className="flex flex-col md:flex-row">
                   <div className="w-full md:w-1/2">
-             
+
                     <LineChart categories={lineChartData.categories} data={lineChartData.data} />
-                   
-                 
+
+
                   </div>
                   <div className="w-full md:w-1/2">
                     <PieChart pieData={pieChartData} />
                   </div>
                 </div>
-                
+
 
                 <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
                 <div className="overflow-x-auto">
@@ -304,8 +276,8 @@ console.log("lineChartData",lineChartData)
                       </tr>
                     </thead>
                     <tbody>
-                      {threeMonths.transactions?.length > 0 ? (
-                        threeMonths.transactions.map((txn, index) => (
+                      {trasactionData.transactions?.length > 0 ? (
+                        trasactionData.transactions.map((txn, index) => (
                           <tr key={index} className="odd:bg-white even:bg-[#F2F2F2]">
                             <td className="px-4 py-2">{txn.transactionId}</td>
                             <td className="px-4 py-2">{new Date(txn.transactionDateTime).toLocaleTimeString()}</td>
