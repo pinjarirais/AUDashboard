@@ -7,7 +7,7 @@ function transactionHistory({trasactionData}) {
         <>
             <div className="overflow-x-auto">
                 <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead>
+                    <thead className='text-left'>
                         <tr className="bg-[#D9D9D9]">
                             <th className="px-4 py-2">Transaction</th>
                             <th className="px-4 py-2">Time</th>
