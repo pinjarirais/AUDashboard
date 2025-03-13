@@ -12,7 +12,7 @@ const PieChart = ({ pieData }) => {
     title: { text: "" },
     series: [
       {
-        name: "Current Month Expense",
+        name: "",
         data: hasData ? pieData : [],
         showInLegend: hasData,
       },

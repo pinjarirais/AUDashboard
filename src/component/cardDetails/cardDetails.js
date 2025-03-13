@@ -7,6 +7,9 @@ import { FadeLoader } from "react-spinners";
 // import ToastNotification from "../../component/ToastNotification";
 import CardList from "./cardList";
 import TransactionHistory from "./transactionHistory";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCalendarAlt } from "react-icons/fa";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
@@ -150,6 +153,23 @@ function CardDetails() {
     setIsLoading(true)
     fetchDataOnDateChange(fromDate, newToDate);
   };
+
+  //calender custom icon
+  const CustomDatePickerInput = ({ value, onClick }) => (
+    <div
+      className="relative w-full cursor-pointer"
+      onClick={onClick}
+    >
+      <input
+        type="text"
+        value={value}
+        readOnly
+        className="w-full rounded-md bg-white px-3 py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px] pr-8"/>
+      <FaCalendarAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+    </div>
+  );
+
+
   return (
     <>
       {isLoading ? (
@@ -168,27 +188,50 @@ function CardDetails() {
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
                 <div className="md:max-w-96 mx-auto mb-10">
                   <div className="flex flex-row items-end gap-2 justify-center">
-                    <div>
+                    {/* <div>
                       <p><strong>From</strong></p>
                       <input
                         type="date"
                         value={fromDate}
                         onChange={(e) => setFromDate(e.target.value)}
                         max={newToDate}
-                        className=" appearance-none w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
                       />
-                    </div>
-                    <div>
+                    </div> */}
+                    {/* <div>
                       <p><strong>To</strong></p>
                       <input
                         type="date"
                         value={newToDate}
                         onChange={(e) => setToDate(e.target.value)}
                         min={fromDate}
-                        max={getFormattedDate(new Date())}
-                        className="appearance-none w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                        max={getFormattedDate(new Date())} 
+                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                      />
+                    </div> */}
+                    <div>
+                      <p><strong>From</strong></p>
+                      <DatePicker
+                        selected={fromDate ? new Date(fromDate) : null}
+                        onChange={(date) => setFromDate(getFormattedDate(date))}
+                        maxDate={newToDate ? new Date(newToDate) : new Date()}
+                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa]focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none 
+                          text-[12px] md:text-[14px] h-[30px]"
+                          customInput={<CustomDatePickerInput />}
                       />
                     </div>
+                    <div>
+                      <p><strong>To</strong></p>
+                      <DatePicker
+                        selected={newToDate ? new Date(newToDate) : null}
+                        onChange={(date) => setToDate(getFormattedDate(date))}
+                        minDate={fromDate ? new Date(fromDate) : null}
+                        maxDate={new Date()}
+                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                        customInput={<CustomDatePickerInput />}
+                      />
+                    </div>
+
 
                     <button
                       type="button"

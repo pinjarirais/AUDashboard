@@ -3,12 +3,13 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 const LineChart = ({ categories, data }) => {
+  console.log("categories",categories)
   const hasData = data && data.length > 0 && data.some(value => value !== null && value !== undefined);
 
   const options = {
     title: { text: "" },
     xAxis: { categories: categories || [] },
-    yAxis: { title: { text: "Sales (in USD)" } },
+    yAxis: { title: { text: "Sales (in Rupees)" } },
     series: [
       {
         name: "Sales",
