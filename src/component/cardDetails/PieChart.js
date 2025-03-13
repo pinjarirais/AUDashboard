@@ -3,23 +3,39 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 const PieChart = ({ pieData }) => {
-    // console.log("pieData",pieData)
+  const hasData = pieData && pieData.length > 0 && pieData.some(item => item.y > 0);
+
   const options = {
     chart: {
       type: "pie",
     },
-    title: {
-      text: "",
-    },
+    title: { text: "" },
     series: [
       {
         name: "Current Month Expense",
-        data: pieData || [],
+        data: hasData ? pieData : [],
+        showInLegend: hasData,
       },
     ],
+    lang: {
+      noData: "No data available", 
+    },
+    noData: {
+      style: {
+        fontSize: "16px",
+        fontWeight: "bold",
+        color: "#777",
+      },
+    },
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return hasData ? (
+    <HighchartsReact highcharts={Highcharts} options={options} />
+  ) : (
+    <div className="flex justify-center items-center h-40 text-gray-500 font-semibold">
+      No data available
+    </div>
+  );
 };
 
 export default PieChart;

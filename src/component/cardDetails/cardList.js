@@ -3,6 +3,7 @@ import { Link} from "react-router-dom";
 import { FadeLoader } from "react-spinners";
 
 function cardList({cards,handleCardSelection,trasactionData,selectedCard}) {
+  console.log("trasactionData",trasactionData)
   return (
     <>
             <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">

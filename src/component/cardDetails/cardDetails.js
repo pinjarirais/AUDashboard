@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
@@ -173,8 +173,9 @@ function CardDetails() {
                       <input
                         type="date"
                         value={fromDate}
-                        onChange={(e) => setFromDate(e.target.value)} // Updates state on change
-                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                        onChange={(e) => setFromDate(e.target.value)}
+                        max={newToDate}
+                        className=" appearance-none w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
                       />
                     </div>
                     <div>
@@ -182,8 +183,10 @@ function CardDetails() {
                       <input
                         type="date"
                         value={newToDate}
-                        onChange={(e) => setToDate(e.target.value)} // Updates state on change
-                        className="w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
+                        onChange={(e) => setToDate(e.target.value)}
+                        min={fromDate}
+                        max={getFormattedDate(new Date())}
+                        className="appearance-none w-full rounded-md bg-white px-0.5 py-0.8 md:px-3 md:py-1.5 border border-[#a3a5aa] focus:border-[#6d3078] focus:ring-1 focus:ring-[#6d3078] focus:outline-none text-[12px] md:text-[14px] h-[30px]"
                       />
                     </div>
 
