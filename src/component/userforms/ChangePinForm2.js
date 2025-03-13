@@ -13,7 +13,7 @@ const formSchema = z.object({
         .regex(/^[a-zA-Z0-9]{6}$/, "OTP must be exactly 6 alphanumeric characters"),
 });
 
-const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES,toast }) => {
+const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES,toast, CHuserID }) => {
     const token = JSON.parse(localStorage.getItem("token"));
     const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES,toast }) => {
         if (timeLeft === 0){
             setTimeout(() => {
                 if (window.confirm("Session expired! Please try again later.")) {
-                  navigate("/cardDetails");
+                  navigate(`/cardDetails/${CHuserID}`);
                 }
               }, 100); 
         };

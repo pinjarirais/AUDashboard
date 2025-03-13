@@ -17,7 +17,7 @@ const pinSchema = z
     path: ["confirmPin"],
   });
 
-const ChangePinForm3 = ({ cardNo, encryptAES, toast }) => {
+const ChangePinForm3 = ({ cardNo, encryptAES, toast, CHuserID }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const navigate = useNavigate();
   const {
@@ -45,7 +45,7 @@ const ChangePinForm3 = ({ cardNo, encryptAES, toast }) => {
       setExpired(true);
       setTimeout(() => {
         if (window.confirm("Session expired! Please try again later.")) {
-          navigate("/cardDetails");
+          navigate(`/cardDetails/${CHuserID}`);
         }
       }, 100); 
     }, 120000); 
@@ -100,7 +100,7 @@ const ChangePinForm3 = ({ cardNo, encryptAES, toast }) => {
       }
         if (res.status === 200) {
           setTimeout(() => {
-            navigate("/cardDetails");
+            navigate(`/cardDetails/${CHuserID}`);
           }, 3000);
             
         }
