@@ -56,10 +56,12 @@ function OTP({ getmobiledata, mobileresponse, encryptAES,decryptAES }) {
       let authuser = response.data.roleName;
       let jwtToken = response.data.token;
       let mobileNumber = response.data.mobileNumber;
+      let userId = response.data.userId;
 
       localStorage.setItem("authuser", JSON.stringify(authuser));
       localStorage.setItem("token", JSON.stringify(jwtToken));
       localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
+      localStorage.setItem("userId", JSON.stringify(userId));
       navigate("/dashboard");
     }
   } catch (error) {

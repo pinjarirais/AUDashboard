@@ -60,10 +60,10 @@ function Header() {
           </button>
 
           {isOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-10">
-              <div className="p-3 border-b border-gray-200">
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-10 ">
+              <div className="p-3 border-b border-gray-200 break-words">
                 <p className="text-gray-700 font-semibold">{pfname}</p>
-                <p className="text-sm text-gray-500">{pfemail}</p>
+                <p className="text-[0.8rem] text-wrap text-gray-500 ">{pfemail}</p>
               </div>
               <button
                 onClick={clearSession}

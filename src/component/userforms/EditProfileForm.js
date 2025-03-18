@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast"; 
+import CryptoJS from "crypto-js";
 
+// Validation Schema
 const formSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name cannot exceed 50 characters"),
     panCardNumber: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Invalid PAN card format"),
@@ -18,25 +20,38 @@ const EditProfileForm = () => {
     const userData = location.state;
     const navigate = useNavigate();
 
+    const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars
+    const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
+    
+    // AES Encryption function
+    function encryptAES(text) {
+        const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
+        const iv = CryptoJS.enc.Utf8.parse(IV);
+        const encrypted = CryptoJS.AES.encrypt(text, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7,
+        });
+        return encrypted.toString();
+    }
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
-        trigger,
         handleSubmit,
         formState: { errors },
     } = useForm({
         defaultValues: {
-            name: userData.chUser.name,
-            panCardNumber: userData.cardHolder.pancardNumber,
-            mobileNumber: userData.chUser.phone,
-            email: userData.chUser.email,
+            name: userData?.chUser?.name || "",
+            panCardNumber: userData?.cardHolder?.pancardNumber || "",
+            mobileNumber: userData?.chUser?.phone || "",
+            email: userData?.chUser?.email || "",
         },
         resolver: zodResolver(formSchema),
         mode: "onChange",
     });
 
     const onSubmit = async (data) => {
-        console.log("Iam clicked");
         setIsSubmitting(true);
 
         try {
@@ -47,7 +62,7 @@ const EditProfileForm = () => {
                 return;
             }
 
-            const userId = userData.cardHolder.id;
+            const userId = userData?.cardHolder?.id;
             if (!userId) {
                 toast.error("User ID not found!");
                 setIsSubmitting(false);
@@ -60,9 +75,12 @@ const EditProfileForm = () => {
                 email: data.email,
             });
 
+            const encryptedPayload = encryptAES(payload);
+            const requestBody = { payload: encryptedPayload };
+
             const response = await axios.put(
                 `http://localhost:8081/api/cardholders/editProfile/${userId}`,
-                payload,
+                requestBody,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -79,12 +97,22 @@ const EditProfileForm = () => {
                 }, 1800);
             }
         } catch (error) {
-            if (error.response?.status === 403) {
-                toast.error("Please Enter Valid Data");
+            if (error.response) {
+                const { status, data } = error.response;
+
+                if (status === 400 && data.errors && typeof data.errors === "object") {
+                    toast.error(error.response.data);
+                } 
+                else if (status === 403) {
+                    toast.error(error.response.data);
+                } 
+                else {
+                    toast.error(error.response.data);
+                }
             } else {
-                toast.error(`Failed! ${error.response?.data?.message || error.message}`);
+                toast.error(error.response.data);
             }
-            console.error("Error updating data:", error);
+            console.error("Error updating data:", error.response.data);
         }
 
         setIsSubmitting(false);
@@ -92,9 +120,7 @@ const EditProfileForm = () => {
 
     return (
         <>
-           
             <Toaster position="top-center" reverseOrder={false} />
-
             <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
                 <h1 className="text-center text-[24px] my-5 font-bold">Edit Profile</h1>
 

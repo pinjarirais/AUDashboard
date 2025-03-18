@@ -11,13 +11,14 @@ function Dashboard() {
   const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
   const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
+  const userId = JSON.parse(localStorage.getItem("userId"));
 
   const [currentpg, setCurrentPg] = useState(0);
   const [totalLength, setTotalLength] = useState(0);
 
   console.log("authuser >>>>>>>", authuser);
   const AUS = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=${currentpg}&size=10`;
-  const CH = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=0&size=10`;
+  const CH = `http://localhost:8081/api/cardholders/chUsers/${userId}`;
 
   const [localtoken, setLocalToken] = useState(authuser);
   let [userData, isLoding, isError, exlData] = useDataFetch(
@@ -26,11 +27,19 @@ function Dashboard() {
   );
 
   console.log("userData >>>>>>>>", userData);
+  if (userData?.name !== undefined && userData?.email !== undefined) {
+    // setSharedData(userData)
+    localStorage.setItem("profilename", JSON.stringify(userData?.name ));
+    localStorage.setItem("profilemail", JSON.stringify(userData?.email));
+    
+  }
+
 
   if (userData?.ausUser?.name !== undefined && userData?.ausUser?.email !== undefined) {
     // setSharedData(userData)
-    localStorage.setItem("profilename", JSON.stringify(userData?.ausUser?.name));
+    localStorage.setItem("profilename", JSON.stringify(userData?.ausUser?.name ));
     localStorage.setItem("profilemail", JSON.stringify(userData?.ausUser?.email));
+    
   }
 
   let AUStotalLenght = userData?.totalElements;
