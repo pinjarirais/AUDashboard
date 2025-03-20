@@ -5,28 +5,29 @@ import { Link } from "react-router-dom";
 
 function CHtable({ userData }) {
   const [currentpg, setCurrentPg] = useState(0);
-  const [ExcelData, setExcelData] = useState([])
-  const datalength = userData?.length;
+  const [ExcelData, setExcelData] = useState([]);
+
+  const datalength = userData?.cardHolders?.length || 0;
   const numberpg = Math.ceil(datalength / 10);
   const pagenumber = [...Array(numberpg || 1).keys()];
   const startpg = currentpg * 10;
   const endpg = startpg + 10;
 
-  const fileName = "CHUsers"; // here enter filename for your excel file
-    useEffect(()=>{
-     
-    // reshaping the array
-    const customHeadings = userData?.cardHolders?.map(item=>({
-      "Id": item.id,
-      "Card Number": item.cardNumber,
-      "Name": item.name,
-      "Pancard Number": item.pancardNumber,
-      "Email": item.email,
-      "Phone": item.phone,
-    }))
-  
-     setExcelData(customHeadings) 
-    },[])
+  const fileName = "CHUsers";
+
+  useEffect(() => {
+    if (userData?.cardHolders) {
+      const customHeadings = userData.cardHolders.map((item) => ({
+        Id: item.id,
+        "Card Number": item.cardNumber,
+        Name: userData.name,
+        "Pancard Number": item.pancardNumber,
+        Email: userData.email,
+        Phone: userData.phone,
+      }));
+      setExcelData(customHeadings);
+    }
+  }, [userData]);
 
   return (
     <>
@@ -61,21 +62,20 @@ function CHtable({ userData }) {
             </tr>
           </thead>
           <tbody>
-            {userData &&
-              userData?.chUsers?.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-gray-300 p-2">{item.id}</td>
-                  <td className="border border-gray-300 p-2">
+          {userData?.cardHolders?.slice(startpg, endpg).map((item) => (
+              <tr key={item.id}>
+                <td className="border border-gray-300 p-2">{item.id}</td>
+                <td className="border border-gray-300 p-2">
                   <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>
-                  {item.cardHolders[0].cardNumber}</Link></td>
-                  <td className="border border-gray-300 p-2">
-                    {item.name}
-                  </td>
-                  <td className="border border-gray-300 p-2">{item.cardHolders[0].pancardNumber}</td>                  
-                  <td className="border border-gray-300 p-2">{item.email}</td>
-                  <td className="border border-gray-300 p-2">{item.phone}</td>                  
-                </tr>
-              ))}
+                    {item.cardNumber}
+                  </Link>
+                </td>
+                <td className="border border-gray-300 p-2">{userData.name}</td>
+                <td className="border border-gray-300 p-2">{item.pancardNumber}</td>
+                <td className="border border-gray-300 p-2">{userData.email}</td>
+                <td className="border border-gray-300 p-2">{userData.phone}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

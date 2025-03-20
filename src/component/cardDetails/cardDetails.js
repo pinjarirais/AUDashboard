@@ -125,7 +125,7 @@ function CardDetails() {
 
   const handleCardSelection = (cardId) => {
     setSelectedCard(cardId);
-    setIsLoading(true);
+    // setIsLoading(true);
     fetchTransactionDetails(cardId);
   };
 

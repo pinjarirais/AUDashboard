@@ -98,7 +98,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse,encryptAES }) {
         <DevTool control={control} />
       </form>
       {mobError && (
-        <p className="text-xs text-red-500 mt-1 text-center">{mobError}</p>
+        <p className="text-xs text-red-500 mt-1 text-center md:max-w-80">{mobError}</p>
       )}
     </>
   );
