@@ -6,9 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../../component/counttime";
 
-
-
-function OTP({ getmobiledata, mobileresponse, encryptAES,decryptAES }) {
+function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
   let navigate = useNavigate();
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
@@ -27,48 +25,46 @@ function OTP({ getmobiledata, mobileresponse, encryptAES,decryptAES }) {
 
   const { errors, isValid } = formState;
 
+  async function postdata(data) {
+    try {
+      const payload = JSON.stringify({
+        phone: getmobiledata,
+        otp: data.otpfield,
+      });
 
- async function postdata(data) {
-  try {
+      const encryptedPayload = encryptAES(payload);
+      const requestBody = { payload: encryptedPayload };
 
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/validate-otp",
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const payload = JSON.stringify({
-      phone: getmobiledata,
-      otp: data.otpfield,
-    });
+      console.log("otp responce >>>>", response);
 
-    const encryptedPayload = encryptAES(payload);
-    const requestBody = { payload: encryptedPayload };
+      if (response.status === 200) {
+        let authuser = response.data.roleName;
+        let jwtToken = response.data.token;
+        let mobileNumber = response.data.mobileNumber;
+        let userId = response.data.userId;
 
-    const response = await axios.post(
-      "http://localhost:8080/api/auth/validate-otp",
-      requestBody, 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        localStorage.setItem("authuser", JSON.stringify(authuser));
+        localStorage.setItem("token", JSON.stringify(jwtToken));
+        localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
+        if (authuser === "CH USER") {
+          localStorage.setItem("userId", JSON.stringify(userId));
+        }
+        navigate("/dashboard");
       }
-    );
-
-    console.log("otp responce >>>>", response)
-
-    if (response.status === 200) {
-      let authuser = response.data.roleName;
-      let jwtToken = response.data.token;
-      let mobileNumber = response.data.mobileNumber;
-      let userId = response.data.userId;
-
-      localStorage.setItem("authuser", JSON.stringify(authuser));
-      localStorage.setItem("token", JSON.stringify(jwtToken));
-      localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
-      localStorage.setItem("userId", JSON.stringify(userId));
-      navigate("/dashboard");
+    } catch (error) {
+      setResponseError(error.response?.data?.message || "Something went wrong");
     }
-  } catch (error) {
-    setResponseError(error.response?.data?.message || "Something went wrong");
   }
-}
-
 
   const onSubmit = (data) => {
     postdata(data);
@@ -121,8 +117,6 @@ function OTP({ getmobiledata, mobileresponse, encryptAES,decryptAES }) {
             {responseError.code}
           </p>
         )}
-
-        
 
         {errors.otpfield && (
           <p className="text-xs w-full block text-red-500 mt-1">

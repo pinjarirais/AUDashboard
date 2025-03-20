@@ -35,10 +35,7 @@ function Header() {
 
 
   const clearSession = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("profilename");
-    localStorage.removeItem("profilemail");
-
+    localStorage.clear();
     
     window.dispatchEvent(new Event("profileUpdated"));
 
