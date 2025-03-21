@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 function transactionHistory({ trasactionData }) {
-  const authuser = JSON.parse(localStorage.getItem("authuser"));
+    const authuser = JSON.parse(localStorage.getItem("authuser"));
   // console.log("trasactionData",trasactionData)
   return (
     <>

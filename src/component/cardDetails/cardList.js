@@ -9,8 +9,8 @@ function cardList({
   selectedCard,
   ChuserID,
 }) {
+  // console.log("trasactionData",trasactionData)
   const authuser = JSON.parse(localStorage.getItem("authuser"));
-  console.log("trasactionData", trasactionData);
   return (
     <>
       <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
