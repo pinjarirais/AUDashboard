@@ -3,14 +3,20 @@ import ChangePinForm1 from "./ChangePinForm1";
 import ChangePinForm2 from "./ChangePinForm2";
 import ChangePinForm3 from "./ChangePinForm3";
 import CryptoJS from "crypto-js";
-
+import toast, { Toaster } from 'react-hot-toast';
+import { useLocation } from "react-router-dom";
 
 
 function ChangePin() {
+    const location = useLocation();
+    const CHuserID = location.state
+    console.log("detail page ID >>>>>", CHuserID)
     const [cardNo, setCardNo] = useState('')
     const [generateOtp, setGenerateOtp] = useState(true)
     const [verifyOtp, setVerifyOtp] = useState(false)
     const [pin, setPin] = useState(false)
+
+    console.log(cardNo)
 
     const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars
 const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
@@ -40,16 +46,18 @@ function encryptAES(text) {
       
 
     return (<>
+
+<Toaster    position="top-center" reverseOrder={false} />
         <div className="form-wrap">
             <div className='login-form w-full p-4 pb-16'>
                 <div className='form-wrapp mx-auto sm:w-full sm:max-w-sm'>
                     
 
-                    { generateOtp && <ChangePinForm1 setCardNo={setCardNo}  setGenerateOtp={setGenerateOtp}  setVerifyOtp={setVerifyOtp} encryptAES={encryptAES} />}
+                    { generateOtp && <ChangePinForm1 setCardNo={setCardNo}  setGenerateOtp={setGenerateOtp}  setVerifyOtp={setVerifyOtp} encryptAES={encryptAES}  toast={toast} />}
 
-                    {verifyOtp && <ChangePinForm2 cardNo={cardNo} setVerifyOtp={setVerifyOtp}  setPin={setPin} encryptAES={encryptAES} />}
+                    {verifyOtp && <ChangePinForm2 cardNo={cardNo} setVerifyOtp={setVerifyOtp}  setPin={setPin} encryptAES={encryptAES} toast={toast}  CHuserID={CHuserID} />}
 
-                    {pin && <ChangePinForm3 cardNo={cardNo} encryptAES={encryptAES} />}
+                    {pin && <ChangePinForm3 cardNo={cardNo} encryptAES={encryptAES} toast={toast} CHuserID={CHuserID} />}
 
                 </div>
             </div>

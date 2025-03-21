@@ -13,7 +13,7 @@ const formSchema = z.object({
         .regex(/^[a-zA-Z0-9]{6}$/, "OTP must be exactly 6 alphanumeric characters"),
 });
 
-const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES }) => {
+const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES,toast, CHuserID }) => {
     const token = JSON.parse(localStorage.getItem("token"));
     const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES }) => {
         if (timeLeft === 0){
             setTimeout(() => {
                 if (window.confirm("Session expired! Please try again later.")) {
-                  navigate("/dashboard");
+                  navigate(`/cardDetails/${CHuserID}`);
                 }
               }, 100); 
         };
@@ -56,35 +56,42 @@ const ChangePinForm2 = ({ cardNo, setVerifyOtp, setPin, encryptAES }) => {
         if (percentage > 33) return "#f97316"; 
         return "#dc2626";
     };
+    console.log(cardNo)
 
     const onSubmit = async (data) => {
-        const encryptedOtp = encryptAES(data.otp);
-        const payload = {
-            cardNumber: cardNo,
-            otp: encryptedOtp
-        };
-
-        await axios.post(
-            "http://localhost:8081/api/cardholders/validateOtp",
-            payload,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-            }
-        ).then((res) => {
-            alert(res.data);
-            if (res.status === 200) {
+        try {
+            const payload = JSON.stringify({
+                cardNumber: cardNo,
+                otp: data.otp
+            });
+    
+            const encryptedPayload = encryptAES(payload);
+            const requestBody = { payload: encryptedPayload };
+    
+            const response = await axios.post(
+                "http://localhost:8081/api/cardholders/validateOtp",
+                requestBody,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                }
+            );
+    
+            if (response.status === 200) {
+                toast.success(response.data || "OTP verified successfully!");
                 setVerifyOtp(false);
                 setPin(true);
+            } else {
+                throw new Error(response.data || "OTP verification failed.");
             }
-        })
-        .catch((err) => {
+        } catch (err) {
             const message = err.response?.data?.message || "Invalid or expired OTP.";
-           alert(message)
-        });
+            toast.error(message);
+        }
     };
+    
 
     return (
         <>

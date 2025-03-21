@@ -3,6 +3,10 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
+import BarChart from "./BarChart";
+import AreaChart from "./AreaChart";
+import DonutChart from "./DonutChart";
+
 import { FadeLoader } from "react-spinners";
 // import ToastNotification from "../../component/ToastNotification";
 import CardList from "./cardList";
@@ -10,6 +14,8 @@ import TransactionHistory from "./transactionHistory";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
+import { set } from "zod";
+import StackedBarChart from "./StackedBarChart";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
@@ -17,6 +23,10 @@ function CardDetails() {
   const [trasactionData, setTransactionData] = useState([]);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
+  const [areaChartData, setAreaChartData] = useState([]);
+  const [donutChartData, setDonutChartData] = useState([]);
+  const [StackedBarChartData,setStackedBarData]=useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fromDate, setFromDate] = useState("");
   const [newToDate, setToDate] = useState("");
@@ -102,30 +112,66 @@ function CardDetails() {
     } else {
       setLineChartData([]);
       setPieChartData([]);
+      setBarChartData([]);
+      setAreaChartData([]);
+      setDonutChartData([]);
+      setStackedBarData([]);
     }
   }, [trasactionData, selectedCard]);
 
 
   //Chart Logic
   const updateCardData = (transactions) => {
-    transactions && transactions.sort((a, b) => new Date(a.transactionDateTime) - new Date(b.transactionDateTime));
-    setLineChartData({
-      categories: transactions && transactions.map((txn) => new Date(txn.transactionDateTime).toLocaleDateString()),
-      data: transactions && transactions.map((txn) => txn.amount),
-    });
-
-    const totalExpense = transactions && transactions.reduce((acc, txn) => acc + txn.amount, 0);
-    const remainingBalance = 1000 - totalExpense;
-
-    setPieChartData([
-      { name: "Expense", y: totalExpense },
-      { name: "Balance", y: remainingBalance > 0 ? remainingBalance : 0 },
-    ]);
+    if (!Array.isArray(transactions) || transactions.length === 0) {
+      setPieChartData([]);
+      setBarChartData([]);
+      setDonutChartData([]);
+      setAreaChartData({ categories: [], data: [] });
+      setLineChartData({ categories: [], data: [] });
+      setStackedBarData([]); 
+      setAreaChartData([]);
+      setBarChartData([]);
+      setLineChartData([]);
+      setDonutChartData([]);
+      
+      return;
+    }
+    transactions.sort((a, b) => new Date(a.transactionDateTime) - new Date(b.transactionDateTime));
+    const categories = transactions.map((txn) => new Date(txn.transactionDateTime).toLocaleDateString());
+    const data = transactions.map((txn) => txn.amount);
+    
+    setLineChartData({ categories, data });
+    setAreaChartData({ categories, data });
+    const categoryMap = transactions.reduce((acc, txn) => {
+      if (!txn.category || typeof txn.amount !== "number") return acc;
+      acc[txn.category] = (acc[txn.category] || 0) + txn.amount;
+      return acc;
+    }, {});
+  
+    const categoryData = Object.entries(categoryMap).map(([category, amount]) => ({
+      name: category,
+      y: amount,
+    }));
+  
+    setPieChartData(categoryData);
+    setBarChartData(categoryData);
+    setDonutChartData(categoryData);
+    const groupedData = transactions.reduce((acc, txn) => {
+      const date = new Date(txn.transactionDateTime).toLocaleDateString();
+      if (!acc[date]) acc[date] = { date };
+      acc[date][txn.category] = (acc[date][txn.category] || 0) + txn.amount;
+      return acc;
+    }, {});
+  
+    const formattedStackedData = Object.values(groupedData);
+    setStackedBarData(formattedStackedData);
   };
+  
+  
 
   const handleCardSelection = (cardId) => {
     setSelectedCard(cardId);
-    setIsLoading(true);
+    // setIsLoading(true);
     fetchTransactionDetails(cardId);
   };
 
@@ -182,7 +228,7 @@ function CardDetails() {
             <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-[85vh]">
 
               {/* Sidebar - Cards List */}
-              <CardList handleCardSelection={handleCardSelection} cards={cards} selectedCard={selectedCard} trasactionData={trasactionData} />
+              <CardList handleCardSelection={handleCardSelection} cards={cards} selectedCard={selectedCard} trasactionData={trasactionData} ChuserID={id}/>
 
               {/* Charts & Transactions */}
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
@@ -250,6 +296,22 @@ function CardDetails() {
                     <PieChart pieData={pieChartData} />
                   </div>
                 </div>
+                <div className="flex flex-col md:flex-row">
+                  <div className="w-full md:w-1/2">
+                  <BarChart barData={barChartData} />
+                  </div>
+                  <div className="w-full md:w-1/2">
+                  <AreaChart areaData={areaChartData} />
+                  </div>
+                  </div>
+                  <div className="flex flex-col md:flex-row">
+                  <div className="w-full md:w-1/2">
+                  <DonutChart donutData={donutChartData} />
+                  </div>
+                  <div className="w-full md:w-1/2">
+                  <StackedBarChart stackBarData={StackedBarChartData} />
+                  </div>
+                  </div>
                 <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
 
                 {/*Transaction Table */}

@@ -2,7 +2,7 @@ import React from 'react'
 import { Link} from "react-router-dom";
 import { FadeLoader } from "react-spinners";
 
-function cardList({cards,handleCardSelection,trasactionData,selectedCard}) {
+function cardList({cards,handleCardSelection,trasactionData,selectedCard, ChuserID}) {
   // console.log("trasactionData",trasactionData)
   return (
     <>
@@ -37,7 +37,7 @@ function cardList({cards,handleCardSelection,trasactionData,selectedCard}) {
                               </div>
                               <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-2 mb-5">
                                 <button className="max-w-[200px] md:max-w-full w-full mx-auto bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
-                                  <Link to="/ChangePin" state={trasactionData}>Change Pin</Link>
+                                  <Link to="/ChangePin" state={ChuserID}>Change Pin</Link>
                                 </button>
                               </div>
                             </div>

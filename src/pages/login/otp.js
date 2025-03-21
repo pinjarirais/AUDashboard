@@ -4,13 +4,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CryptoJS from "crypto-js";
 import CountdownTimer from "../../component/counttime";
 
-const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 char
-const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
 
-function OTP({ getmobiledata, mobileresponse }) {
+
+function OTP({ getmobiledata, mobileresponse, encryptAES,decryptAES }) {
   let navigate = useNavigate();
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
@@ -22,50 +20,29 @@ function OTP({ getmobiledata, mobileresponse }) {
   });
 
   const { register, handleSubmit, formState, reset } = useForm({
-    defaultValues: { mobileNumber: decryptAES(getmobiledata)},
+    defaultValues: { mobileNumber: getmobiledata },
     resolver: zodResolver(otpschema),
     mode: "onChange",
   });
 
   const { errors, isValid } = formState;
 
-  // AES Encryption function for OTP
-  function encryptAES(text) {
-    const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
-    const iv = CryptoJS.enc.Utf8.parse(IV);
-    const encrypted = CryptoJS.AES.encrypt(text, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-    return encrypted.toString();
-  }
-
-  // AES Encryption function for OTP
-  function decryptAES(text) {
-    const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
-    const iv = CryptoJS.enc.Utf8.parse(IV);
-    const decrypted = CryptoJS.AES.decrypt(text, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-    return decrypted.toString(CryptoJS.enc.Utf8); // Properly decode decrypted text
-  }
 
  async function postdata(data) {
   try {
-    // Encrypt OTP before sending
-    const encryptedOtp = encryptAES(data.otpfield);
 
-    const payload = {
+
+    const payload = JSON.stringify({
       phone: getmobiledata,
-      otp: encryptedOtp,
-    };
+      otp: data.otpfield,
+    });
+
+    const encryptedPayload = encryptAES(payload);
+    const requestBody = { payload: encryptedPayload };
 
     const response = await axios.post(
       "http://localhost:8080/api/auth/validate-otp",
-      payload, 
+      requestBody, 
       {
         headers: {
           "Content-Type": "application/json",
@@ -73,14 +50,18 @@ function OTP({ getmobiledata, mobileresponse }) {
       }
     );
 
+    console.log("otp responce >>>>", response)
+
     if (response.status === 200) {
       let authuser = response.data.roleName;
       let jwtToken = response.data.token;
       let mobileNumber = response.data.mobileNumber;
+      let userId = response.data.userId;
 
       localStorage.setItem("authuser", JSON.stringify(authuser));
       localStorage.setItem("token", JSON.stringify(jwtToken));
       localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
+      localStorage.setItem("userId", JSON.stringify(userId));
       navigate("/dashboard");
     }
   } catch (error) {

@@ -8,11 +8,11 @@ const LineChart = ({ categories, data }) => {
 
   const options = {
     title: { text: "" },
-    xAxis: { categories: categories || [] },
-    yAxis: { title: { text: "Sales (in Rupees)" } },
+    xAxis: {  title: { text: "Date" }, categories: categories || []},
+    yAxis: { title: { text: "Amount in Rupees" } },
     series: [
       {
-        name: "Sales",
+        name: "Amount",
         data: hasData ? data : [],
         showInLegend: hasData,
       },

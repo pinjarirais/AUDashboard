@@ -16,6 +16,6 @@ export const ExportToExcel = ({ apiData, fileName }) => {
   };
 
   return (
-    <button className='bg-blue-700 h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md' onClick={(e) => exportToCSV(apiData, fileName)}>Download Excel</button>
+    <button className='bg-[#6d3078] h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md' onClick={(e) => exportToCSV(apiData, fileName)}>Download Excel</button>
   );
 };

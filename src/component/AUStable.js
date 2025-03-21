@@ -13,7 +13,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
   //const startpg = currentpg * 10;
   //const endpg = startpg + 10;
 
-  console.log("totalLength >>>>>>>>", AUStotalLenght)
+  console.log("totalLength >>>>>>>>", AUStotalLenght);
 
   const fileName = "CHUsers"; // here enter filename for your excel file
   useEffect(() => {
@@ -38,7 +38,12 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
             <ExportToExcel apiData={ExcelData} fileName={fileName} />
           </div>
           <div className="ml-4">
-            <Link className="bg-blue-700 inline-flex h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md" to="/uploaddata">Upload Lead</Link>
+            <Link
+              className="bg-[#6d3078] inline-flex h-8 text-white px-4 py-1 rounded-md cursor-pointer shadow-md"
+              to="/uploaddata"
+            >
+              Upload Lead
+            </Link>
           </div>
         </div>
         <div>
@@ -46,6 +51,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
             pagenumber={pagenumber}
             currentpg={currentpg}
             setCurrentPg={setCurrentPg}
+            AUStotalLenght={AUStotalLenght}
           />
         </div>
       </div>
@@ -71,11 +77,16 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
                 <tr key={item.id}>
                   <td className="border border-gray-300 p-2">{item.id}</td>
                   <td className="border border-gray-300 p-2">
-                    <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>
-                      {item?.cardHolders[0]?.cardNumber}
+                    {item?.cardHolders[0]?.cardNumber}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <Link
+                      className="text-blue-700 underline"
+                      to={`/cardDetails/${item.id}`}
+                    >
+                      {item.name}
                     </Link>
                   </td>
-                  <td className="border border-gray-300 p-2">{item.name}</td>
                   <td className="border border-gray-300 p-2">
                     {item?.cardHolders[0]?.pancardNumber}
                   </td>

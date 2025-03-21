@@ -9,11 +9,13 @@ import UploadData from "../pages/login/uploaddata";
 import CardDetails from "./cardDetails/cardDetails";
 import ChangePin from "./userforms/ChangePin";
 import EditProfile from "./userforms/EditProfile";
+import PreventBackNavigation from "../hooks/PreventBackNavigation";
 
 function Layout() {
   return (
     <>
       <BrowserRouter>
+      <PreventBackNavigation />
         <div>
             <Routes>
               <Route path="/" element={<Login />} />

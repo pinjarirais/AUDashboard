@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {  useState } from "react";
 //import { useOutletContext } from "react-router-dom";
 import useDataFetch from "../hooks/useDataFetch";
 import CHtable from "../component/CHtable";
@@ -7,37 +7,46 @@ import { useData } from "../component/dataProvider";
 
 function Dashboard() {
   //const { setTitle } = useOutletContext();
-  const { setSharedData } = useData();
+  // const { setSharedData } = useData();
   const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
-  const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
+  // const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
+  const userId = JSON.parse(localStorage.getItem("userId"));
 
   const [currentpg, setCurrentPg] = useState(0);
-  const [totalLength, setTotalLength] = useState(0);
+  // const [totalLength, setTotalLength] = useState(0);
 
   console.log("authuser >>>>>>>", authuser);
   const AUS = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=${currentpg}&size=10`;
-  const CH = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=0&size=10`;
+  const CH = `http://localhost:8081/api/cardholders/chUsers/${userId}`;
 
   const [localtoken, setLocalToken] = useState(authuser);
   let [userData, isLoding, isError, exlData] = useDataFetch(
-    localtoken == "AUS USER" ? AUS : CH,
+    localtoken === "AUS USER" ? AUS : CH,
     token
   );
 
   console.log("userData >>>>>>>>", userData);
-
-  
-
   if (userData?.name !== undefined && userData?.email !== undefined) {
-    // setSharedData(userData)
-    localStorage.setItem("profilename", JSON.stringify(userData.name));
-    localStorage.setItem("profilemail", JSON.stringify(userData.email));
+    localStorage.setItem("profilename", JSON.stringify(userData?.name));
+    localStorage.setItem("profilemail", JSON.stringify(userData?.email));
+  
+    // Dispatch event to notify Header component about the update
+    window.dispatchEvent(new Event("profileUpdated"));
   }
+  
+  if (userData?.ausUser?.name !== undefined && userData?.ausUser?.email !== undefined) {
+    localStorage.setItem("profilename", JSON.stringify(userData?.ausUser?.name));
+    localStorage.setItem("profilemail", JSON.stringify(userData?.ausUser?.email));
+  
+    // Dispatch event to notify Header component about the update
+    window.dispatchEvent(new Event("profileUpdated"));
+  }
+  
+  
+  let AUStotalLenght = userData?.totalElements;
 
-  let AUStotalLenght =  userData?.totalElements;
-
-  console.log("AUStotalLenght >>>>>>>", AUStotalLenght)
+  console.log("AUStotalLenght >>>>>>>", AUStotalLenght);
 
   // useEffect(()=>{
   //   if (userData?.totalElements !== undefined) {
@@ -55,7 +64,7 @@ function Dashboard() {
         <div className="dashboard-wrap">
           <div className="flex flex-auto justify-between border-b-[1px] py-5 align-middle">
             <div>
-              <h1 className="text-[22px] bold">Dashboard</h1>
+              <h1 className="text-[24px] font-bold">DASHBOARD</h1>
             </div>
             <div className="top-search">
               <input
@@ -71,7 +80,7 @@ function Dashboard() {
               <div className="flex justify-center items-center h-[400px]">
                 <h2>Loading...</h2>
               </div>
-            ) : localtoken == "AUS USER" ? (
+            ) : localtoken === "AUS USER" ? (
               <AUStable
                 userData={userData}
                 exlData={exlData}

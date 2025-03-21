@@ -17,7 +17,7 @@ const pinSchema = z
     path: ["confirmPin"],
   });
 
-const ChangePinForm3 = ({ cardNo, encryptAES }) => {
+const ChangePinForm3 = ({ cardNo, encryptAES, toast, CHuserID }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const navigate = useNavigate();
   const {
@@ -45,7 +45,7 @@ const ChangePinForm3 = ({ cardNo, encryptAES }) => {
       setExpired(true);
       setTimeout(() => {
         if (window.confirm("Session expired! Please try again later.")) {
-          navigate("/dashboard");
+          navigate(`/cardDetails/${CHuserID}`);
         }
       }, 100); 
     }, 120000); 
@@ -69,22 +69,23 @@ const ChangePinForm3 = ({ cardNo, encryptAES }) => {
   const onSubmit = async (data) => {
 
     if (expired) {
-      alert("Session expired! Please start again."); //
+      toast.error("Session expired! Please start again."); //
       return;
     }
 
-    const encryptedCurrentPin = encryptAES(data.currentPin);
-    const encryptedNewPin = encryptAES(data.newPin);
-    const encryptedConfirmNewPin = encryptAES(data.confirmPin);
-    const payload = {
+      
+    const payload = JSON.stringify({
       cardNumber: cardNo,
-      currentPin: encryptedCurrentPin,
-      newPin: encryptedNewPin,
-      confirmNewPin: encryptedConfirmNewPin,
-    };
+      currentPin: data.currentPin,
+      newPin: data.newPin,
+      confirmPin: data.confirmPin,
+    });
+
+    const encryptedPayload = encryptAES(payload);
+    const requestBody = { payload: encryptedPayload };
 
     await axios
-      .post("http://localhost:8081/api/cardholders/updatePin", payload, {
+      .post("http://localhost:8081/api/cardholders/updatePin", requestBody, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -92,18 +93,21 @@ const ChangePinForm3 = ({ cardNo, encryptAES }) => {
       })
       .then((res) => {
        if(res.status === 400){
-          alert("Please enter valid credentials.");
+        toast.error("Please enter valid credentials.");
       }
       else{
-          alert(res.data)
+        toast.success(res.data)
       }
         if (res.status === 200) {
-            navigate("/dashboard");
+          setTimeout(() => {
+            navigate(`/cardDetails/${CHuserID}`);
+          }, 3000);
+            
         }
       })
       .catch((err) => {
         const message = err.response?.data?.message || "Please enter valid credentials.";
-       alert(message)
+        toast.error(message)
     });
     reset();
   };

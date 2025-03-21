@@ -4,24 +4,9 @@ import { DevTool } from "@hookform/devtools";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import CryptoJS from "crypto-js";
 
-const SECRET_KEY = "9f6d7e1b2c3a8f4d0e5b6c7d8a9e2f3c"; // 32 chars
-const IV = "MTIzNDU2Nzg5MDEy"; // 16 chars
 
-// AES Encryption function
-function encryptAES(text) {
-  const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
-  const iv = CryptoJS.enc.Utf8.parse(IV);
-  const encrypted = CryptoJS.AES.encrypt(text, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-  });
-  return encrypted.toString();
-}
-
-function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
+function Mobile({ setIsData, setGetMobileData, setMobileResponse,encryptAES }) {
   const [mobError, setMobError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,17 +28,17 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
     try {
       setIsLoading(true);
 
-      // Encrypt the phone number
-      const encryptedPhone = encryptAES(data.mobileNumber);
-      console.log("Encrypted Phone:", encryptedPhone);
 
-      const payload = { phone: encryptedPhone };
+      const payload = JSON.stringify({ phone: data.mobileNumber });
+
+      const encryptedPayload = encryptAES(payload);
+      const requestBody = { payload: encryptedPayload };
 
       const response = await axios.post(
         "http://localhost:8080/api/auth/generate-otp",
-        payload,
+        requestBody, 
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" }, 
         }
       );
 
@@ -62,7 +47,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
       if (response.status === 200) {
         setIsLoading(false);
         setIsData(true);
-        setGetMobileData(encryptedPhone);
+        setGetMobileData(data.mobileNumber);
         setMobileResponse(response.data.message);
       }
     } catch (error) {
@@ -113,7 +98,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse }) {
         <DevTool control={control} />
       </form>
       {mobError && (
-        <p className="text-xs text-red-500 mt-1 text-center">{mobError}</p>
+        <p className="text-xs text-red-500 mt-1 text-center md:max-w-80">{mobError}</p>
       )}
     </>
   );
