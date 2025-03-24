@@ -55,7 +55,7 @@ function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+   console.log("pfname",pfname)
   return (
     <div className="px-10 flex flex-auto justify-between items-center border-b-[1px] border-[#6d3078]">
       <div className="logo-wrap">
