@@ -24,7 +24,14 @@ const useDataFetch = (url, token = null) => {
       setUserData(response.data);
       setIsLoding(false);
     } catch (error) {
-      setIsError(error);
+      if (error.response && error.response.status === 403) {
+        console.warn("403 Forbidden: Clearing localStorage and redirecting...");
+        localStorage.clear();
+        window.location.reload(); // Force reload after clearing storage
+      }
+      setIsError(error.message || "An error occurred while fetching data");
+    } finally {
+      setIsLoding(false);
     }
   }
 
