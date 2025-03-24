@@ -19,7 +19,7 @@ import StackedBarChart from "./StackedBarChart";
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCardId, setselectedCardId] = useState(null);
   const [trasactionData, setTransactionData] = useState([]);
   const [lineChartData, setLineChartData] = useState({ categories: [], data: [] });
   const [pieChartData, setPieChartData] = useState([]);
@@ -76,8 +76,8 @@ function CardDetails() {
       fetchedCards.forEach((card) => {
       });
       if (fetchedCards.length > 0) {
-        setSelectedCard(fetchedCards[0].id);
-        fetchTransactionDetails(fetchedCards[0].id)
+        setselectedCardId(fetchedCards[0].id);
+        fetchTransactionDetails(fetchedCards[0].id,fromNintyDays,toDate)
       }
     } catch (error) {
       setIsLoading(false);
@@ -87,10 +87,10 @@ function CardDetails() {
 
 
   //fetch expenses details
-  const fetchTransactionDetails = async (id) => {
+  const fetchTransactionDetails = async (id,fromDate,toDate) => {
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/expenses/by-card/${id}/by-date-range?fromDate=${fromNintyDays}&toDate=${toDate}`,
+        `http://localhost:8082/api/expenses/by-card/${id}/by-date-range?fromDate=${fromDate}&toDate=${toDate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ function CardDetails() {
       setDonutChartData([]);
       setStackedBarData([]);
     }
-  }, [trasactionData, selectedCard]);
+  }, [trasactionData, selectedCardId]);
 
 
   //Chart Logic
@@ -170,34 +170,14 @@ function CardDetails() {
   
 
   const handleCardSelection = (cardId) => {
-    setSelectedCard(cardId);
+    setselectedCardId(cardId);
     // setIsLoading(true);
-    fetchTransactionDetails(cardId);
-  };
-
-
-  //On Date Change Api
-  const fetchDataOnDateChange = async (from, to) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8082/api/expenses/by-card/${selectedCard}/by-date-range?fromDate=${from}&toDate=${to}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          },
-        }
-      );
-      setIsLoading(false)
-      setTransactionData(response.data);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
+    fetchTransactionDetails(cardId,fromDate, newToDate);
   };
 
   const handleShowClick = () => {
     setIsLoading(true)
-    fetchDataOnDateChange(fromDate, newToDate);
+    fetchTransactionDetails(selectedCardId,fromDate, newToDate);
   };
 
   //calender custom icon
@@ -228,7 +208,7 @@ function CardDetails() {
             <div className="flex flex-col md:flex-row justify-between py-3 align-middle md:h-[85vh]">
 
               {/* Sidebar - Cards List */}
-              <CardList handleCardSelection={handleCardSelection} cards={cards} selectedCard={selectedCard} trasactionData={trasactionData} ChuserID={id}/>
+              <CardList handleCardSelection={handleCardSelection} cards={cards} selectedCard={selectedCardId} trasactionData={trasactionData} ChuserID={id}/>
 
               {/* Charts & Transactions */}
               <div className="w-full md:w-3/4 md:px-5 overflow-y-auto pb-[100px] scrollbar-hide">
