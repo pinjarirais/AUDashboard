@@ -1,20 +1,16 @@
 import React, {  useState } from "react";
-//import { useOutletContext } from "react-router-dom";
 import useDataFetch from "../hooks/useDataFetch";
 import CHtable from "../component/CHtable";
 import AUStable from "../component/AUStable";
 import { useData } from "../component/dataProvider";
 
 function Dashboard() {
-  //const { setTitle } = useOutletContext();
-  // const { setSharedData } = useData();
+
   const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
-  // const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
   const userId = JSON.parse(localStorage.getItem("userId"));
 
   const [currentpg, setCurrentPg] = useState(0);
-  // const [totalLength, setTotalLength] = useState(0);
 
   console.log("authuser >>>>>>>", authuser);
   const AUS = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=${currentpg}&size=10`;
@@ -47,12 +43,6 @@ function Dashboard() {
   let AUStotalLenght = userData?.totalElements;
 
   console.log("AUStotalLenght >>>>>>>", AUStotalLenght);
-
-  // useEffect(()=>{
-  //   if (userData?.totalElements !== undefined) {
-  //     setTotalLength(userData?.totalElements);
-  //   }
-  // },[])
 
   return isError ? (
     <div className="flex justify-center items-center h-[400px] ">

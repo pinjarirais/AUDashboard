@@ -31,18 +31,6 @@ function CHtable({ userData }) {
 
   return (
     <>
-      {/* <div className="flex justify-end">
-        <div>
-          <ExportToExcel apiData={ExcelData} fileName={fileName} />
-        </div> 
-        <div>
-          <Pagination
-            pagenumber={pagenumber}
-            currentpg={currentpg}
-            setCurrentPg={setCurrentPg}
-          />
-        </div>
-      </div> */}
       <div className="mt-4">
         <table className="border-collapse border border-gray-400 w-full">
           <thead>
