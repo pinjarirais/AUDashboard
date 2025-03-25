@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
+import {MaskNumber} from "../../hooks/MaskNumber";
 
 function cardList({
   cards,
@@ -46,7 +47,8 @@ function cardList({
                         </div>
                         <div className="px-5 py-2">
                           <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">
-                            {card.cardNumber}
+                            {/* {card.cardNumber} */}
+                            <MaskNumber CardNumber={card.cardNumber} />
                           </p>
                         </div>
                       </div>
