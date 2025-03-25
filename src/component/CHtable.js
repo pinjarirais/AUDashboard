@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "./pagination";
 import { Link } from "react-router-dom";
-import MaskNumber from "./MaskNumber";
+import {MaskNumber, PhoneNumber} from "./MaskNumber";
 
 function CHtable({ userData }) {
   const [currentpg, setCurrentPg] = useState(0);
@@ -79,7 +79,8 @@ function CHtable({ userData }) {
                         {userData.email}
                       </td>
                       <td className="border border-gray-300 p-2" rowSpan={arr.length}>
-                        {userData.phone}
+                        <PhoneNumber PhoneNumber={userData.phone}/>
+                        
                       </td>
                     </>
                   ) : null}
