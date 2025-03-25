@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MaskNumber = ({ accountNumber }) => {
+export const MaskNumber = ({ accountNumber }) => {
         const maskBankNumber = (number) => {
             if (!number) return '';
             let numStr = number.toString();
@@ -10,7 +10,24 @@ const MaskNumber = ({ accountNumber }) => {
             }
             return maskedArr.join('').replace(/(.{4})/g, '$1 ').trim();
         };
-        return <div className='font-semibold text-[0.8rem] md:text-base'>{maskBankNumber(accountNumber)}</div>;
+        return <>
+        {maskBankNumber(accountNumber)}
+        </>;
       };
       
-export default MaskNumber
+
+
+export const PhoneNumber = ({ PhoneNumber }) => {
+const maskPhoneNumber = (number) => {
+    if (!number) return '';
+    let numStr = number.toString();
+    let maskedArr = numStr.split('');
+    for (let i = 0; i <= 5 && i < maskedArr.length; i++) {
+        maskedArr[i] = 'X';
+    }
+    return maskedArr;
+};
+return <>
+{maskPhoneNumber(PhoneNumber)}
+</>;
+};
