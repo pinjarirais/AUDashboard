@@ -101,7 +101,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
         <label className="text-sm/6 text-gray-700 flex justify-between">
           Enter OTP
           <div>
-            <CountdownTimer setIsTimer={setIsTimer} />
+            <CountdownTimer startTime={300} setIsTimer={setIsTimer} />
           </div>
         </label>
         <input
