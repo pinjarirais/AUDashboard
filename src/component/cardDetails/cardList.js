@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
+import MaskNumber from "../MaskNumber";
+
+
 
 function cardList({
   cards,
@@ -11,9 +14,17 @@ function cardList({
 }) {
   // console.log("trasactionData",trasactionData)
   const authuser = JSON.parse(localStorage.getItem("authuser"));
+
+//   const cardNumber = cards.map((card)=>card.cardNumber)
+         
+//   let formattedNumbers = cardNumber.map(num => 
+//     num.toString().replace(/(\d{4})/g, '$1 ')
+// );
+//   console.log(formattedNumbers)
+
   return (
     <>
-      <div className="w-full md:w-1/4 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
+      <div className="w-full md:w-1/5 md:border-r-[1px] md:pr-5 pb-[50px] flex flex-col justify-between">
         <div className="flex flex-wrap flex-col justify-between pb-[20px] relative h-[90%] overflow-y-auto overflow-x-clip scrollbar-hide">
           <div className="space-y-3 mb-5 md:mb-0">
             <label className="block text-sm/6 text-gray-700 font-bold text-center md:text-left">
@@ -25,7 +36,7 @@ function cardList({
                   {/* <ToastNotification message={`Data loaded successfully for ${id} `} type="success" /> */}
                   <label
                     className={`block w-full mx-auto md:ml-3 text-center md:text-left ${
-                      selectedCard == card.id ? "font-bold text-[#6d3078]" : ""
+                      selectedCard === card.id ? "font-bold text-[#6d3078]" : ""
                     }`}
                   >
                     <input
@@ -44,15 +55,16 @@ function cardList({
                         <div className="px-5 py-2">
                           <p>Credit Card</p>
                         </div>
-                        <div className="px-5 py-2">
-                          <p className="tracking-[2px] md:tracking-[0.8px] lg:translate-[2px] md:text-[12px] lg:text-[16px]">
-                            {card.cardNumber}
-                          </p>
+                        <div className="px-5 py-2">                     
+                          <MaskNumber accountNumber={card.cardNumber} />
+
+                          
                         </div>
                       </div>
-                      <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-2 mb-5">
+                      <div className="flex flex-row gap-3 md:text-[12px] lg:text-[16px] mt-2 mb-5 ">
                         {authuser === "CH USER" ? (
-                          <button className="max-w-[200px] md:max-w-full w-full mx-auto bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+                          <button className="max-w-[200px] md:max-w-[80%] w-full mx-auto bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md md:ml-2 lg:ml-5 sm:ml-0 
+                          ">
                             <Link to="/ChangePin" state={ChuserID}>
                               Change Pin
                             </Link>
@@ -75,7 +87,7 @@ function cardList({
 
         <div className="flex flex-row gap-3 md:text-[12px] lg:text-[18px]">
           {authuser === "CH USER" ? (
-            <button className="max-w-[200px] md:max-w-full w-full mx-auto bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md">
+            <button className="max-w-[200px] md:max-w-full w-full mx-auto bg-[#9a48a9] hover:bg-[#6d3078] text-white p-2 border-none rounded-md -ml-[12px]">
               <Link to="/EditProfile" state={trasactionData}>
                 Edit Profile
               </Link>

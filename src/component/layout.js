@@ -3,8 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/dashboard";
 import AuthLayout from "./authlayout";
 import Login from "../pages/login/login";
-import Details from "../pages/details";
-import UserForms from "../pages/userForms";
 import UploadData from "../pages/login/uploaddata";
 import CardDetails from "./cardDetails/cardDetails";
 import ChangePin from "./userforms/ChangePin";

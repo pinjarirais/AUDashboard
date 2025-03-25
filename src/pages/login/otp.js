@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../../component/counttime";
 
-function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
+function OTP({ getmobiledata, mobileresponse, encryptAES }) {
   let navigate = useNavigate();
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
@@ -17,11 +17,13 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
     }),
   });
 
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState, reset} = useForm({
     defaultValues: { mobileNumber: getmobiledata },
     resolver: zodResolver(otpschema),
     mode: "onChange",
   });
+
+
 
   const { errors, isValid } = formState;
 

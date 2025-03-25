@@ -23,7 +23,6 @@ const ChangePinForm3 = ({ cardNo, encryptAES, toast, CHuserID }) => {
   const {
     register,
     handleSubmit,
-    trigger,
     reset,
     setValue,
     formState: { errors, isValid, isSubmitting },

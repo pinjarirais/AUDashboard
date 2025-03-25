@@ -14,7 +14,6 @@ import TransactionHistory from "./transactionHistory";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
-import { set } from "zod";
 import StackedBarChart from "./StackedBarChart";
 
 function CardDetails() {
@@ -50,11 +49,9 @@ function CardDetails() {
     threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
     setFromDate(formatDate(threeMonthsAgo));
     setToDate(formatDate(currentDate));
-  }, []);
-
-  useEffect(() => {
     fetchAllCards();
   }, []);
+
 
 
 

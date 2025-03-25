@@ -3,7 +3,7 @@ import React, {  useState } from "react";
 import useDataFetch from "../hooks/useDataFetch";
 import CHtable from "../component/CHtable";
 import AUStable from "../component/AUStable";
-import { useData } from "../component/dataProvider";
+
 
 function Dashboard() {
   //const { setTitle } = useOutletContext();

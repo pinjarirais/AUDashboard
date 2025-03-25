@@ -4,7 +4,7 @@ const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
   const [sharedData, setSharedData] = useState([]);
-  console.log("profile name",sharedData)
+  // console.log("profile name",sharedData)
 
   return (
     <DataContext.Provider value={{ sharedData, setSharedData }}>

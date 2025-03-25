@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import Pagination from "./pagination";
 import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
+import MaskNumber from "./MaskNumber";
 
 function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
   //const [currentpg, setCurrentPg] = useState(0);
   const [ExcelData, setExcelData] = useState([]);
-  const datalength = userData?.cardHolders?.length;
+  // const datalength = userData?.cardHolders?.length;
   //const numberpg = Math.ceil(datalength / 10);
   const numberpg = Math.ceil(AUStotalLenght / 10);
   const pagenumber = [...Array(numberpg || 1).keys()];
@@ -59,7 +60,6 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
         <table className="border-collapse border border-gray-400 w-full">
           <thead>
             <tr>
-              <th className="border border-gray-300 bg-gray-200 p-2">ID</th>
               <th className="border border-gray-300 bg-gray-200 p-2">
                 Card Number
               </th>
@@ -75,10 +75,20 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
             {userData?.chUsers &&
               userData?.chUsers?.map((item) => (
                 <tr key={item.id}>
-                  <td className="border border-gray-300 p-2">{item.id}</td>
-                  <td className="border border-gray-300 p-2">
-                    {item?.cardHolders[0]?.cardNumber}
+
+                    <td className="border border-gray-300 p-2 px-3">
+                      <ul className="list-disc ml-4">
+                        {item?.cardHolders.map((ch) => (
+                          <li key={ch.id}>
+                            <div className="" >
+                            <MaskNumber accountNumber={ch.cardNumber}/>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                   </td>
+
+
                   <td className="border border-gray-300 p-2">
                     <Link
                       className="text-blue-700 underline"

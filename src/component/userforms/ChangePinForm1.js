@@ -17,7 +17,6 @@ const ChangePinForm1 = ({ setCardNo, setGenerateOtp, setVerifyOtp, encryptAES, t
         register,
         handleSubmit,
         setValue,
-        watch,
         formState: { errors, isValid, isSubmitting },
     } = useForm({
         resolver: zodResolver(formSchema),
