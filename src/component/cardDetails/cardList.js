@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
-import MaskNumber from "../MaskNumber";
+import {MaskNumber} from "../MaskNumber";
 
 
 
