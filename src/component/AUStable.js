@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pagination from "./pagination";
 import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
-import MaskNumber from "./MaskNumber";
+import {MaskNumber , PhoneNumber} from "./MaskNumber";
 
 function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
   //const [currentpg, setCurrentPg] = useState(0);
@@ -101,7 +101,9 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
                     {item?.cardHolders[0]?.pancardNumber}
                   </td>
                   <td className="border border-gray-300 p-2">{item.email}</td>
-                  <td className="border border-gray-300 p-2">{item.phone}</td>
+                  <td className="border border-gray-300 p-2">
+                    <PhoneNumber PhoneNumber={item.phone}/>
+                  </td>
                 </tr>
               ))}
           </tbody>
