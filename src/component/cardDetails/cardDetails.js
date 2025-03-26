@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
@@ -42,6 +42,7 @@ function CardDetails({chUserId}) {
   const token = JSON.parse(localStorage.getItem("token"));
   const formatDate = (date) => date.toISOString().split("T")[0];
   const { id } = useParams();
+  const navigate = useNavigate();
 
   console.log(chUserId)
 
@@ -81,6 +82,11 @@ function CardDetails({chUserId}) {
         setselectedCardId(fetchedCards[0].id);
         fetchTransactionDetails(fetchedCards[0].id,fromNintyDays,toDate)
       }
+      }
+      else{
+        localStorage.clear();
+        navigate("/");
+
       }
     } catch (error) {
       setIsLoading(false);
