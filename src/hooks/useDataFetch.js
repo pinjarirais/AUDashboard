@@ -22,18 +22,14 @@ const useDataFetch = (url, token = null) => {
       });
       console.log("data response >>>>>", response);
       setUserData(response.data);
-      setIsLoding(false);
     } catch (error) {
-      if (error.response && error.response.status === 403) {
-        console.warn("403 Forbidden: Clearing localStorage and redirecting...");
-        localStorage.clear();
-        window.location.reload(); // Force reload after clearing storage
-      }
-      setIsError(error.message || "An error occurred while fetching data");
+      console.warn("Error occurred: Clearing localStorage and reloading...");
+      localStorage.clear();
+      window.location.reload(); 
     } finally {
       setIsLoding(false);
     }
-  }
+  }    
 
   useEffect(() => {
     userdata();
