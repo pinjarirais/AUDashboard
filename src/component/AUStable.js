@@ -7,7 +7,7 @@ import { MaskNumber, PhoneNumber } from "../hooks/MaskNumber";
 // Lazy load TableBody for better performance
 const TableBody = React.lazy(() => import("./TableBody"));
 
-function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
+function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght, setChUserId}) {
   const [loading, setLoading] = useState(true);
   const fileName = "CHUsers"; // Filename for Excel export
 
@@ -66,7 +66,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
 
             {/* Suspense for Lazy Loading */}
             <Suspense fallback={<tr><td colSpan="6" className="text-center p-4">Loading Data...</td></tr>}>
-              <TableBody userData={userData} />
+              <TableBody userData={userData} setChUserId={setChUserId}/>
             </Suspense>
           </table>
         </div>

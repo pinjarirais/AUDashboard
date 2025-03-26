@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../../component/counttime";
 
-function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
+function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData }) {
   let navigate = useNavigate();
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
@@ -22,6 +22,8 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
     resolver: zodResolver(otpschema),
     mode: "onChange",
   });
+
+  console.log("params >>>>", encryptAES(getmobiledata))
 
   const { errors, isValid } = formState;
 
@@ -57,7 +59,11 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
         localStorage.setItem("token", JSON.stringify(jwtToken));
         localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
         if (authuser === "CH USER") {
-          localStorage.setItem("userId", JSON.stringify(userId));
+          localStorage.setItem("CHuserId", JSON.stringify(userId));
+        }
+
+        if (authuser === "AUS USER") {
+          localStorage.setItem("AUSuserId", JSON.stringify(userId));
         }
         navigate("/dashboard");
       }
@@ -71,9 +77,8 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
     reset();
   };
 
-  const handleResentOTP = () => {
-    onSubmit({ mobileNumber: getmobiledata });
-    navigate("/");
+  const handleResentOTP = () => {    
+    setIsData(false)
   };
 
   return (
@@ -101,7 +106,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES }) {
         <label className="text-sm/6 text-gray-700 flex justify-between">
           Enter OTP
           <div>
-            <CountdownTimer startTime={300} setIsTimer={setIsTimer} />
+            <CountdownTimer startTime={15} setIsTimer={setIsTimer} />
           </div>
         </label>
         <input

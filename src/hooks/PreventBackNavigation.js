@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 function PreventBackNavigation() {
   const location = useLocation();
@@ -38,3 +38,9 @@ function PreventBackNavigation() {
 }
 
 export default PreventBackNavigation;
+
+
+export const ClearStorageAndRedirect = () => {
+  localStorage.clear(); // Clear localStorage
+  return <Navigate to="/" replace />;
+};

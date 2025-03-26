@@ -5,20 +5,21 @@ import CHtable from "../component/CHtable";
 import AUStable from "../component/AUStable";
 import { useData } from "../component/dataProvider";
 
-function Dashboard() {
+function Dashboard({setChUserId}) {
   //const { setTitle } = useOutletContext();
   // const { setSharedData } = useData();
   const token = JSON.parse(localStorage.getItem("token"));
   const authuser = JSON.parse(localStorage.getItem("authuser"));
   // const mobileNumber = JSON.parse(localStorage.getItem("mobileNumber"));
-  const userId = JSON.parse(localStorage.getItem("userId"));
+  const CHuserId = JSON.parse(localStorage.getItem("CHuserId"));
+  const AUSuserId = JSON.parse(localStorage.getItem("AUSuserId"));
 
   const [currentpg, setCurrentPg] = useState(0);
   // const [totalLength, setTotalLength] = useState(0);
 
   console.log("authuser >>>>>>>", authuser);
-  const AUS = `http://localhost:8081/api/cardholders/ausUsers/1/chUsers?page=${currentpg}&size=10`;
-  const CH = `http://localhost:8081/api/cardholders/chUsers/${userId}`;
+  const AUS = `http://localhost:8081/api/cardholders/ausUsers/${AUSuserId}/chUsers?page=${currentpg}&size=10`;
+  const CH = `http://localhost:8081/api/cardholders/chUsers/${CHuserId}`;
 
   const [localtoken, setLocalToken] = useState(authuser);
   let [userData, isLoding, isError, exlData] = useDataFetch(
@@ -87,9 +88,10 @@ function Dashboard() {
                 setCurrentPg={setCurrentPg}
                 currentpg={currentpg}
                 AUStotalLenght={AUStotalLenght}
+                setChUserId={setChUserId}
               />
             ) : (
-              <CHtable userData={userData} />
+              <CHtable userData={userData} setChUserId={setChUserId} />
             )}
           </div>
         </div>

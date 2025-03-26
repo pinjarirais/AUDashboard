@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
@@ -14,10 +14,9 @@ import TransactionHistory from "./transactionHistory";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
-import { set } from "zod";
 import StackedBarChart from "./StackedBarChart";
 
-function CardDetails() {
+function CardDetails({chUserId}) {
   const [cards, setCards] = useState([]);
   const [selectedCardId, setselectedCardId] = useState(null);
   const [trasactionData, setTransactionData] = useState([]);
@@ -43,6 +42,9 @@ function CardDetails() {
   const token = JSON.parse(localStorage.getItem("token"));
   const formatDate = (date) => date.toISOString().split("T")[0];
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  console.log(chUserId)
 
   useEffect(() => {
     const currentDate = new Date();
@@ -50,11 +52,11 @@ function CardDetails() {
     threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
     setFromDate(formatDate(threeMonthsAgo));
     setToDate(formatDate(currentDate));
+
+      fetchAllCards();
+
   }, []);
 
-  useEffect(() => {
-    fetchAllCards();
-  }, []);
 
 
 
@@ -62,6 +64,7 @@ function CardDetails() {
   const fetchAllCards = async () => {
     try {
       setIsLoading(true);
+      if(id == chUserId){
       const response = await axios.get(`http://localhost:8081/api/cardholders/chUsers/${id}`,
         {
           headers: {
@@ -79,11 +82,18 @@ function CardDetails() {
         setselectedCardId(fetchedCards[0].id);
         fetchTransactionDetails(fetchedCards[0].id,fromNintyDays,toDate)
       }
+      }
+      else{
+        localStorage.clear();
+        navigate("/");
+
+      }
     } catch (error) {
       setIsLoading(false);
       console.error("Error fetching cards:", error);
     }
   };
+
 
 
   //fetch expenses details

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { MaskNumber, PhoneNumber } from "../hooks/MaskNumber";
 
-function TableBody({ userData }) {
+function TableBody({ userData, setChUserId }) {
   return (
     <tbody>
       {userData?.chUsers?.map((item) => (
@@ -12,7 +12,7 @@ function TableBody({ userData }) {
             <MaskNumber CardNumber={item?.cardHolders?.[0]?.cardNumber} />
           </td>
           <td className="border border-gray-300 p-2">
-            <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`}>
+            <Link className="text-blue-700 underline" to={`/cardDetails/${item.id}`} onClick={()=>setChUserId(item.id)}>
               {item.name}
             </Link>
           </td>

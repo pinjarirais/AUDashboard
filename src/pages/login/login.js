@@ -54,7 +54,7 @@ function Login() {
         <div className='form-wrapp mx-auto md:mx-5 sm:w-full sm:max-w-sm'>
           <div className='logo-wrap'><img src={logoImg} className='w-[120px] mx-auto md:mx-0' alt="logo" /></div>
           {isData ? (
-            <OTP mobileresponse={mobileresponse} getmobiledata={getmobiledata} resendFunc={resendFunc} encryptAES={encryptAES} />
+            <OTP mobileresponse={mobileresponse} getmobiledata={getmobiledata} resendFunc={resendFunc} encryptAES={encryptAES}  setIsData={setIsData}/>
           ) : (
             <Mobile setMobileResponse={setMobileResponse} setIsData={setIsData} setGetMobileData={setGetMobileData} setResendFunc={setResendFunc} encryptAES={encryptAES} decryptAES={decryptAES}/>
           )}
