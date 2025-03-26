@@ -196,13 +196,13 @@ const ExcelUploader = () => {
       <div className="mt-4 flex justify-center gap-4">
         <button
           onClick={handleUpload}
-          className="bg-[#6436d7] text-white py-2 px-4 rounded-lg hover:bg-[#502bb5] transition"
+          className="text-[#6d3078] py-2 px-4 rounded-lg hover:bg-[#9643a5] hover:text-white transition border-2 border-[#6d3078]"
         >
           Upload
         </button>
         <button
           onClick={handleDownload}
-          className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition"
+          className="bg-[#6d3078] text-white py-2 px-4 rounded-lg hover:bg-[#9643a5] transition"
         >
           Download
         </button>
