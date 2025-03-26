@@ -26,7 +26,7 @@ useEffect(()=>{
 
   return (
     
-      <p className="text-base text-slate-500">{formatTime(timeLeft)}</p>
+      <>{formatTime(timeLeft)}</>
     
   );
 };

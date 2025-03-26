@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,10 +6,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../../component/counttime";
 
-function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData }) {
+function OTP({
+  getmobiledata,
+  mobileresponse,
+  encryptAES,
+  decryptAES,
+  setIsData,
+}) {
   let navigate = useNavigate();
   const [isTimer, setIsTimer] = useState(false);
   const [responseError, setResponseError] = useState("");
+  const [inValidOtpCount, setInvalidOtpCount] = useState(0);
 
   const otpschema = z.object({
     otpfield: z.string().min(6, {
@@ -23,7 +30,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
     mode: "onChange",
   });
 
-  console.log("params >>>>", encryptAES(getmobiledata))
+  console.log("params >>>>", encryptAES(getmobiledata));
 
   const { errors, isValid } = formState;
 
@@ -50,6 +57,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
       console.log("otp responce >>>>", response);
 
       if (response.status === 200) {
+        setInvalidOtpCount(0);
         let authuser = response.data.roleName;
         let jwtToken = response.data.token;
         let mobileNumber = response.data.mobileNumber;
@@ -68,6 +76,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
         navigate("/dashboard");
       }
     } catch (error) {
+      setInvalidOtpCount((prevCount) => prevCount + 1);
       setResponseError(error.response?.data?.message || "Something went wrong");
     }
   }
@@ -77,9 +86,17 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
     reset();
   };
 
-  const handleResentOTP = () => {    
-    setIsData(false)
+  const handleResentOTP = () => {
+    setIsData(false);
   };
+
+  useEffect(() => {
+    if (inValidOtpCount === 3) {
+      setIsData(false);
+      navigate("/");
+      setInvalidOtpCount(0);
+    }
+  }, [inValidOtpCount, navigate, setIsData]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -106,7 +123,7 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
         <label className="text-sm/6 text-gray-700 flex justify-between">
           Enter OTP
           <div>
-            <CountdownTimer startTime={15} setIsTimer={setIsTimer} />
+            <span className="text-base text-slate-500"><CountdownTimer startTime={20} setIsTimer={setIsTimer} /></span>
           </div>
         </label>
         <input
@@ -154,6 +171,13 @@ function OTP({ getmobiledata, mobileresponse, encryptAES, decryptAES, setIsData 
         >
           Login
         </button>
+        {inValidOtpCount > 0 && inValidOtpCount < 3 ? (
+          <div className="bg-[#ff00002e] border-red-500 border-[1px] p-2 mt-5 md:max-w-80">
+            <span className="text-xs text-red-500 mt-1 text-left md:max-w-full m-0">
+              <b>Invalid OTP. Only {3 - inValidOtpCount} attempt remaining</b>
+            </span>
+          </div>
+        ) : null}
       </div>
     </form>
   );
