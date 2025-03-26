@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,lazy, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import LineChart from "./LineChart";
-import PieChart from "./PieChart";
-import BarChart from "./BarChart";
-import AreaChart from "./AreaChart";
-import DonutChart from "./DonutChart";
-
+// import LineChart from "./LineChart";
+// import PieChart from "./PieChart";
+// import BarChart from "./BarChart";
+// import AreaChart from "./AreaChart";
+// import DonutChart from "./DonutChart";
 import { FadeLoader } from "react-spinners";
 // import ToastNotification from "../../component/ToastNotification";
 import CardList from "./cardList";
@@ -15,7 +14,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
 import { set } from "zod";
-import StackedBarChart from "./StackedBarChart";
+// import StackedBarChart from "./StackedBarChart";
+const LineChart = lazy(() => import("./LineChart"));
+const PieChart = lazy(() => import("./PieChart"));
+const BarChart = lazy(() => import("./BarChart"));
+const AreaChart = lazy(() => import("./AreaChart"));
+const DonutChart = lazy(() => import("./DonutChart"));
+const StackedBarChart = lazy(() => import("./StackedBarChart"));
 
 function CardDetails() {
   const [cards, setCards] = useState([]);
@@ -77,6 +82,7 @@ function CardDetails() {
       });
       if (fetchedCards.length > 0) {
         setselectedCardId(fetchedCards[0].id);
+        console.log("id",fetchedCards[0].id);
         fetchTransactionDetails(fetchedCards[0].id,fromNintyDays,toDate)
       }
     } catch (error) {
@@ -268,6 +274,7 @@ function CardDetails() {
                     </button>
                   </div>
                 </div>
+                <Suspense fallback={<div className="text-center">Loading Charts...</div>}>
                 <div className="flex flex-col md:flex-row">
                   <div className="w-full md:w-1/2">
                     <LineChart categories={lineChartData.categories} data={lineChartData.data} />
@@ -292,10 +299,14 @@ function CardDetails() {
                   <StackedBarChart stackBarData={StackedBarChartData} />
                   </div>
                   </div>
+                  </Suspense>
                 <h1 className="text-center text-[24px] my-5 font-bold">Transaction History</h1>
 
                 {/*Transaction Table */}
-                <TransactionHistory trasactionData={trasactionData} />
+                 <Suspense fallback={<div className="text-center">Loading Transactions...</div>}>
+                    <TransactionHistory trasactionData={trasactionData} />  
+                    </Suspense>
+                {/* <TransactionHistory trasactionData={trasactionData} /> */}
               </div>
 
             </div>
