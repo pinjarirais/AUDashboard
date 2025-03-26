@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const CountdownTimer = ({setIsTimer}) => {
-  const [timeLeft, setTimeLeft] = useState(300);
+const CountdownTimer = ({startTime=300, setIsTimer}) => {
+  const [timeLeft, setTimeLeft] = useState(startTime);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -22,11 +22,11 @@ useEffect(()=>{
   if(!timeLeft){
     setIsTimer(true)
   }
-}, [timeLeft])
+}, [timeLeft,setIsTimer])
 
   return (
     
-      <p className="text-base text-slate-500">{formatTime(timeLeft)}</p>
+      <>{formatTime(timeLeft)}</>
     
   );
 };
