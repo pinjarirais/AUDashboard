@@ -4,7 +4,7 @@ import { ExportToExcel } from "./ExportToExcel";
 import { Link } from "react-router-dom";
 import {MaskNumber , PhoneNumber} from "./MaskNumber";
 
-function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
+function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght,setChUserId }) {
   //const [currentpg, setCurrentPg] = useState(0);
   const [ExcelData, setExcelData] = useState([]);
   // const datalength = userData?.cardHolders?.length;
@@ -13,6 +13,8 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
   const pagenumber = [...Array(numberpg || 1).keys()];
   //const startpg = currentpg * 10;
   //const endpg = startpg + 10;
+
+  console.log("new ID >>>>", userData?.chUsers?.map((user)=>user.id))
 
   console.log("totalLength >>>>>>>>", AUStotalLenght);
 
@@ -74,17 +76,20 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
           <tbody>
             {userData?.chUsers &&
               userData?.chUsers?.map((item) => (
+                
                 <tr key={item.id}>
 
                     <td className="border border-gray-300 p-2 px-3">
                       <ul className="list-disc ml-4">
-                        {item?.cardHolders.map((ch) => (
+                        {item?.cardHolders.map((ch) => {
+                          return(
+
                           <li key={ch.id}>
                             <div className="" >
                             <MaskNumber accountNumber={ch.cardNumber}/>
                             </div>
                           </li>
-                        ))}
+                        )})}
                       </ul>
                   </td>
 
@@ -93,6 +98,7 @@ function AUStable({ userData, currentpg, setCurrentPg, AUStotalLenght }) {
                     <Link
                       className="text-blue-700 underline"
                       to={`/cardDetails/${item.id}`}
+                      onClick={()=>setChUserId(item.id)}
                     >
                       {item.name}
                     </Link>

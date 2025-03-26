@@ -59,7 +59,11 @@ function OTP({ getmobiledata, mobileresponse, encryptAES }) {
         localStorage.setItem("token", JSON.stringify(jwtToken));
         localStorage.setItem("mobileNumber", JSON.stringify(mobileNumber));
         if (authuser === "CH USER") {
-          localStorage.setItem("userId", JSON.stringify(userId));
+          localStorage.setItem("CHuserId", JSON.stringify(userId));
+        }
+
+        if (authuser === "AUS USER") {
+          localStorage.setItem("AUSuserId", JSON.stringify(userId));
         }
         navigate("/dashboard");
       }

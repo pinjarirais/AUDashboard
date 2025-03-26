@@ -3,7 +3,7 @@ import Pagination from "./pagination";
 import { Link } from "react-router-dom";
 import {MaskNumber, PhoneNumber} from "./MaskNumber";
 
-function CHtable({ userData }) {
+function CHtable({ userData,setChUserId }) {
   const [currentpg, setCurrentPg] = useState(0);
   const [ExcelData, setExcelData] = useState([]);
 
@@ -41,8 +41,6 @@ function CHtable({ userData }) {
         <table className="border-collapse border border-gray-400 w-full">
           <thead>
             <tr>
-              {/* <th className="border border-gray-300 bg-gray-200 p-2">ID</th>
-               */}
               <th className="border border-gray-300 bg-gray-200 p-2">Card Numbers</th>
               <th className="border border-gray-300 bg-gray-200 p-2">User Name</th>
               <th className="border border-gray-300 bg-gray-200 p-2">Pancard Number</th>
@@ -51,13 +49,12 @@ function CHtable({ userData }) {
             </tr>
           </thead>
           <tbody>
-            {userData?.cardHolders?.slice(startpg, endpg).map((item, index, arr) => {
-              // Only show user info on the first row for each user
+            {userData?.cardHolders?.map((item, index, arr) => {
+
               const isFirstRow = index === 0;
+
               return (
-                <tr key={item.id} className="text-center">
-                  {/* <td className="border border-gray-300 p-2">{item.id}</td> */}
-                 
+                <tr key={item.id} className="text-center">                
                   {isFirstRow ? (
                     <>
                      <td className="border border-gray-300 p-2">
@@ -70,7 +67,7 @@ function CHtable({ userData }) {
                       </ul>
                     </td>
                       <td className="border border-gray-300 p-2 text-blue-700 underline" rowSpan={arr.length}>
-                        <Link to={`/cardDetails/${item.id}`}>{userData.name}</Link>
+                        <Link to={`/cardDetails/${item.id}`}  onClick={()=>setChUserId(item.id)}>{userData.name}</Link>
                       </td>
                       <td className="border border-gray-300 p-2" rowSpan={arr.length}>
                         {item.pancardNumber}
@@ -80,7 +77,6 @@ function CHtable({ userData }) {
                       </td>
                       <td className="border border-gray-300 p-2" rowSpan={arr.length}>
                         <PhoneNumber PhoneNumber={userData.phone}/>
-                        
                       </td>
                     </>
                   ) : null}

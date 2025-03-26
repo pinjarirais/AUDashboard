@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
 import {MaskNumber} from "../MaskNumber";
 
-
-
 function cardList({
   cards,
   handleCardSelection,
