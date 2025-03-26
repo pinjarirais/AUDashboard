@@ -100,6 +100,7 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse, encryptAES }) 
           setIsTimer(false);
           setLoginAttempt(false);
           setInvalidMobNoCount(0);
+          setMobError(""); 
           localStorage.removeItem("loginAttemptFailed");
           localStorage.removeItem("timerStartTime");
           localStorage.removeItem("invalidMobNoCount");
@@ -158,12 +159,11 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse, encryptAES }) 
         <DevTool control={control} />
       </form>
 
-      {mobError && (
-        <p className="text-xs text-red-500 mt-1 text-center md:max-w-80">
-          {mobError}
-        </p>
-      )}
-
+      {mobError && invalidMobNoCount === 0 && (
+  <p className="text-xs text-red-500 mt-1 text-center md:max-w-80">
+    {mobError}
+  </p>
+)}
       {loginAttemptFailed && isTimer && (
         <div className="bg-[#ff00002e] border-red-500 border-[1px] p-2 mt-5 md:max-w-80">
           <span className="text-xs text-red-500 mt-1 text-left md:max-w-full m-0">
@@ -179,6 +179,14 @@ function Mobile({ setIsData, setGetMobileData, setMobileResponse, encryptAES }) 
           </span>
         </div>
       )}
+      {(invalidMobNoCount>0 && invalidMobNoCount<3)?
+       <div className="bg-[#ff00002e] border-red-500 border-[1px] p-2 mt-5 md:max-w-80">
+       <span className="text-xs text-red-500 mt-1 text-left md:max-w-full m-0">
+         <b>Invalid mobile number. Only {3-invalidMobNoCount} attempt remaining
+         </b>
+       </span>
+     </div>:null
+      }
     </>
   );
 }
