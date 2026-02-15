@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "cra-template": "1.2.0",
     "crypto-js": "^4.2.0",
     "file-saver": "^2.0.5",
